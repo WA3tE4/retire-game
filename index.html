@@ -1,0 +1,1258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="theme-color" content="#0e7490" />
+<meta name="description" content="$RETIRE Retirement Tycoon — Grind once. Retire forever. A meme idle clicker themed around the $RETIRE Solana token." />
+<meta property="og:title" content="$RETIRE Retirement Tycoon" />
+<meta property="og:description" content="Grind once. Retire forever. Escape the 9-5 and build generational wealth." />
+<meta name="twitter:card" content="summary_large_image" />
+<title>$RETIRE Retirement Tycoon — Grind once. Retire forever.</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏝️</text></svg>" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+<style>
+/* =========================================================================
+ * $RETIRE Retirement Tycoon — self-contained build
+ * Palette: relaxing beach (blues/golds) + crypto-green accents
+ * ========================================================================= */
+:root{
+  --blue-deep:#0e7490; --blue:#0891b2; --blue-light:#22d3ee;
+  --gold:#f59e0b; --gold-light:#fcd34d;
+  --green:#10b981; --green-light:#34d399; --purple:#8b5cf6;
+  --sand:#fef3c7; --ink:#0f172a; --ink-soft:#475569;
+  --panel:rgba(255,255,255,.82); --panel-line:rgba(15,23,42,.06);
+  /* layered elevation scale — soft, tinted, directional (not one flat blob) */
+  --shadow-sm:0 1px 2px rgba(8,47,73,.06),0 2px 6px rgba(8,47,73,.08);
+  --shadow-md:0 4px 10px -4px rgba(8,47,73,.15),0 12px 24px -10px rgba(8,47,73,.20);
+  --shadow:0 8px 20px -8px rgba(8,47,73,.22),0 24px 48px -20px rgba(8,47,73,.28);
+  --shadow-lg:0 16px 32px -12px rgba(8,47,73,.30),0 40px 72px -28px rgba(8,47,73,.38);
+  --radius:18px; --radius-sm:12px; --radius-lg:24px; --radius-pill:999px;
+  --font-ui:'Inter','Segoe UI',system-ui,-apple-system,sans-serif;
+  --font-display:'Space Grotesk','Inter',system-ui,sans-serif;
+  --ease:cubic-bezier(.22,.61,.36,1); --ease-out:cubic-bezier(.16,1,.3,1);
+  --ring:0 0 0 3px rgba(34,211,238,.55);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{
+  font-family:var(--font-ui);color:var(--ink);
+  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+  text-rendering:optimizeLegibility;font-feature-settings:'cv02','cv03','cv04','ss01';
+  letter-spacing:-.006em;
+  min-height:100vh;overflow-x:hidden;display:flex;flex-direction:column;
+  background:#0ea5e9;position:relative;
+}
+/* keyboard-only focus rings — accessible without cluttering mouse use */
+:focus-visible{outline:none;box-shadow:var(--ring)}
+button,input{font-family:inherit}
+
+/* ===================== SCENE (SVG background) ===================== */
+#scene{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+#scene svg{width:100%;height:100%;display:block}
+#scene.celebrate{animation:flash .9s ease}
+@keyframes flash{0%,100%{filter:brightness(1)}30%{filter:brightness(1.35) saturate(1.3)}}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes drift{from{transform:translateX(-60px)}to{transform:translateX(110vw)}}
+@keyframes sway{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(3deg)}}
+.cloud{animation:drift linear infinite}
+.floaty{animation:bob 5s ease-in-out infinite}
+.palm-top{transform-origin:center bottom;animation:sway 4s ease-in-out infinite}
+@keyframes breathe{0%,100%{transform:scaleY(1)}50%{transform:scaleY(1.03) translateY(-2px)}}
+.breathe{transform-origin:50% 78%;animation:breathe 2.6s ease-in-out infinite}
+
+/* ===================== HEADER ===================== */
+.topbar{
+  position:relative;z-index:2;display:flex;align-items:center;justify-content:space-between;
+  gap:12px;padding:14px 20px;flex-wrap:wrap;
+  background:linear-gradient(180deg,rgba(8,47,73,.52),rgba(8,47,73,.32));
+  backdrop-filter:blur(14px) saturate(1.4);-webkit-backdrop-filter:blur(14px) saturate(1.4);
+  color:#fff;border-bottom:1px solid rgba(255,255,255,.10);
+}
+.brand{display:flex;align-items:center;gap:12px}
+.brand-logo{width:40px;height:40px;flex-shrink:0;filter:drop-shadow(0 2px 8px rgba(0,0,0,.35))}
+.brand-title{font-family:var(--font-display);font-weight:700;font-size:clamp(1.1rem,3.5vw,1.45rem);letter-spacing:-.01em}
+.brand-tagline{font-size:.78rem;color:var(--gold-light);font-weight:600;letter-spacing:.01em;opacity:.92}
+.header-right{display:flex;align-items:center;gap:10px}
+.icon-btn{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);color:#fff;width:40px;height:40px;border-radius:var(--radius-sm);cursor:pointer;font-size:1.1rem;transition:transform .18s var(--ease),background .2s,border-color .2s;display:grid;place-items:center}
+.icon-btn:hover{transform:translateY(-1px);background:rgba(255,255,255,.22);border-color:rgba(255,255,255,.4)}
+.icon-btn:active{transform:translateY(0)}
+.token-ticker{display:flex;align-items:center;gap:8px;background:rgba(16,185,129,.16);border:1px solid rgba(52,211,153,.45);padding:7px 14px;border-radius:var(--radius-pill);font-weight:600;cursor:pointer;transition:transform .18s var(--ease),background .2s;font-variant-numeric:tabular-nums}
+.token-ticker:hover{transform:translateY(-1px);background:rgba(16,185,129,.24)}
+.ticker-label{color:var(--green-light)}
+.ticker-change.up{color:var(--green-light)} .ticker-change.down{color:#fca5a5}
+.ticker-mc{font-size:.72rem;opacity:.85}
+
+/* ===================== LAYOUT ===================== */
+.layout{position:relative;z-index:2;flex:1;display:grid;grid-template-columns:1fr 1fr;gap:18px;padding:18px;max-width:1120px;width:100%;margin:0 auto}
+.panel{position:relative;background:var(--panel);backdrop-filter:blur(16px) saturate(1.3);-webkit-backdrop-filter:blur(16px) saturate(1.3);border:1px solid rgba(255,255,255,.55);border-radius:var(--radius-lg);box-shadow:var(--shadow);padding:20px}
+/* subtle inner top highlight — reads as real glass, not a flat card */
+.panel::before{content:"";position:absolute;inset:0;border-radius:inherit;padding:1px;background:linear-gradient(180deg,rgba(255,255,255,.7),rgba(255,255,255,0) 40%);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none}
+
+/* ===================== CLICKER PANEL ===================== */
+.clicker-panel{display:flex;flex-direction:column;gap:16px}
+.clicker-panel.shake{animation:shake .4s ease}
+@keyframes shake{0%,100%{transform:translate(0,0)}15%{transform:translate(-5px,3px)}30%{transform:translate(5px,-3px)}45%{transform:translate(-4px,-2px)}60%{transform:translate(4px,2px)}75%{transform:translate(-2px,1px)}}
+.level-banner{background:linear-gradient(135deg,var(--blue-deep),var(--blue));color:#fff;border-radius:var(--radius);padding:14px 16px;box-shadow:inset 0 1px 0 rgba(255,255,255,.18),var(--shadow-sm)}
+.level-info{display:flex;align-items:center;gap:10px;margin-bottom:9px}
+.level-tag{background:var(--gold);color:var(--ink);font-weight:800;padding:3px 11px;border-radius:var(--radius-pill);font-size:.72rem;letter-spacing:.04em;font-variant-numeric:tabular-nums}
+.level-name{font-family:var(--font-display);font-weight:600;font-size:1.05rem;letter-spacing:-.01em}
+.level-progress{position:relative;height:20px;border-radius:999px;background:rgba(255,255,255,.25);overflow:hidden}
+.level-progress-fill{height:100%;width:0;background:linear-gradient(90deg,var(--green),var(--green-light));transition:width .3s ease}
+.level-progress-text{position:absolute;inset:0;display:grid;place-items:center;font-size:.72rem;font-weight:600;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.45);font-variant-numeric:tabular-nums;letter-spacing:.02em}
+
+.fp-display{text-align:center}
+.fp-value{font-family:var(--font-display);font-size:clamp(2.3rem,9vw,3.5rem);font-weight:700;line-height:1;letter-spacing:-.03em;color:var(--blue-deep);font-variant-numeric:tabular-nums;text-shadow:0 1px 0 rgba(255,255,255,.7)}
+.fp-label{font-size:.72rem;color:var(--ink-soft);letter-spacing:.14em;text-transform:uppercase;font-weight:600;margin-top:2px}
+.fp-rates{margin-top:10px;color:var(--green);font-weight:700;font-size:.88rem;font-variant-numeric:tabular-nums}
+.fp-rates .dot{color:var(--ink-soft);margin:0 6px}
+
+.grind-wrap{display:flex;flex-direction:column;align-items:center;gap:8px}
+.grind-button{
+  --size:clamp(170px,44vw,230px);width:var(--size);height:var(--size);border-radius:50%;border:none;cursor:pointer;
+  background:radial-gradient(circle at 35% 28%,var(--gold-light),var(--gold) 55%,#d97706 100%);
+  box-shadow:0 10px 0 #b45309,0 18px 30px rgba(180,83,9,.5);
+  display:flex;align-items:center;justify-content:center;position:relative;
+  transition:transform .08s ease,box-shadow .08s ease;user-select:none;overflow:hidden;
+}
+.grind-button svg{width:76%;height:76%;pointer-events:none}
+.grind-button::after{content:"GRIND";position:absolute;bottom:12px;left:0;right:0;text-align:center;font-family:var(--font-display);font-weight:700;letter-spacing:.18em;color:#7c2d12;font-size:clamp(.9rem,3vw,1.1rem);pointer-events:none;text-shadow:0 1px 0 rgba(255,255,255,.35)}
+.grind-button:active{transform:translateY(8px) scale(.97);box-shadow:0 2px 0 #b45309,0 6px 12px rgba(180,83,9,.5)}
+.grind-button.pop{animation:pop .18s ease}
+@keyframes pop{50%{transform:scale(1.05)}}
+.grind-hint{font-size:.8rem;color:var(--ink-soft);font-weight:500}
+.combo-badge{opacity:0;transform:scale(.7);transition:transform .18s var(--ease),opacity .18s;background:linear-gradient(135deg,#fb923c,#f59e0b);color:#fff;font-weight:800;padding:6px 15px;border-radius:var(--radius-pill);font-size:.85rem;box-shadow:0 6px 16px -4px rgba(245,158,11,.6);font-variant-numeric:tabular-nums}
+.combo-badge.show{opacity:1;transform:scale(1)}
+
+.bonus-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.bonus-chip{border:1px solid var(--panel-line);background:rgba(255,255,255,.8);cursor:pointer;padding:9px 15px;border-radius:var(--radius-pill);font-weight:600;font-size:.84rem;color:var(--ink-soft);transition:transform .14s var(--ease),background .2s,box-shadow .2s;display:inline-flex;align-items:center;gap:6px}
+.bonus-chip:hover{transform:translateY(-1px);box-shadow:var(--shadow-sm)}
+.bonus-chip.static{cursor:default;background:var(--sand);color:#92400e}
+.bonus-chip.static:hover{transform:none;box-shadow:none}
+.bonus-chip.connected{background:var(--green);color:#fff;border-color:var(--green)}
+
+/* ===================== SHOP PANEL ===================== */
+.shop-panel{display:flex;flex-direction:column;min-height:0}
+.tabs{display:flex;gap:6px;margin-bottom:12px}
+.tab{flex:1;border:none;cursor:pointer;padding:11px 4px;border-radius:var(--radius-sm);background:rgba(15,23,42,.05);font-weight:600;font-size:.78rem;color:var(--ink-soft);transition:background .2s,color .2s,transform .15s var(--ease)}
+.tab:hover{background:rgba(15,23,42,.09)}
+.tab.active{background:var(--blue-deep);color:#fff;box-shadow:var(--shadow-sm)}
+.tab-content{overflow-y:auto;max-height:64vh;-webkit-overflow-scrolling:touch}
+.hidden{display:none}
+
+.qty-row{display:flex;align-items:center;gap:6px;margin-bottom:12px}
+.qty-label{font-size:.74rem;font-weight:600;color:var(--ink-soft);margin-right:2px;text-transform:uppercase;letter-spacing:.06em}
+.qty-btn{flex:1;border:1px solid var(--panel-line);background:rgba(255,255,255,.7);cursor:pointer;padding:8px 4px;border-radius:10px;font-weight:700;font-size:.8rem;color:var(--ink-soft);transition:background .18s,color .18s,border-color .18s,transform .12s var(--ease);font-variant-numeric:tabular-nums}
+.qty-btn:hover{background:#fff;border-color:rgba(14,116,144,.4)}
+.qty-btn.active{background:var(--blue-deep);color:#fff;border-color:var(--blue-deep);box-shadow:var(--shadow-sm)}
+.shop-tier{display:flex;align-items:center;gap:10px;font-family:var(--font-display);font-weight:600;color:var(--blue-deep);font-size:.7rem;text-transform:uppercase;letter-spacing:.14em;margin:16px 2px 4px}
+.shop-tier::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,rgba(14,116,144,.25),transparent)}
+.shop-tier:first-child{margin-top:2px}
+.shop-milestone{color:var(--purple);font-weight:900}
+.shop-list,.achievement-list{display:flex;flex-direction:column;gap:8px}
+.shop-item{display:flex;align-items:center;gap:12px;text-align:left;border:1px solid var(--panel-line);background:rgba(255,255,255,.75);border-radius:var(--radius);padding:11px 13px;cursor:pointer;width:100%;transition:transform .12s var(--ease),box-shadow .2s,opacity .2s,border-color .2s,background .2s}
+.shop-item:not(:disabled):hover{transform:translateY(-2px);box-shadow:var(--shadow-md);background:#fff}
+.shop-item:not(:disabled):active{transform:translateY(0);box-shadow:var(--shadow-sm)}
+.shop-item.affordable{border-color:rgba(16,185,129,.5);box-shadow:0 0 0 1px rgba(16,185,129,.25),var(--shadow-sm)}
+.shop-item:disabled{cursor:not-allowed;opacity:.55}
+.shop-item.locked{opacity:.5;filter:grayscale(.6)}
+.shop-icon{width:46px;height:46px;flex-shrink:0;filter:drop-shadow(0 2px 4px rgba(8,47,73,.12))}
+.shop-body{display:flex;flex-direction:column;gap:3px;flex:1;min-width:0}
+.shop-name{font-weight:700;font-size:.94rem;letter-spacing:-.01em}
+.shop-owned{color:var(--green);font-size:.8rem;font-weight:700;font-variant-numeric:tabular-nums}
+.shop-desc{font-size:.76rem;color:var(--ink-soft);line-height:1.3}
+.shop-rate{font-size:.74rem;color:var(--blue-deep);font-weight:600;font-variant-numeric:tabular-nums}
+.shop-cost{flex-shrink:0;background:var(--sand);color:#92400e;font-weight:800;padding:7px 11px;border-radius:var(--radius-sm);font-size:.82rem;white-space:nowrap;font-variant-numeric:tabular-nums;transition:background .2s,color .2s}
+.shop-item.affordable .shop-cost{background:var(--green);color:#fff}
+
+.ach-item{display:flex;align-items:center;gap:12px;border:1px solid var(--panel-line);border-radius:var(--radius);padding:11px 13px;background:rgba(255,255,255,.7);opacity:.5;filter:grayscale(.85);transition:opacity .35s var(--ease),filter .35s,border-color .35s,background .35s,box-shadow .35s}
+.ach-item.unlocked{opacity:1;filter:none;border-color:rgba(245,158,11,.5);background:linear-gradient(135deg,#fffbeb,#fff);box-shadow:0 0 0 1px rgba(245,158,11,.18),var(--shadow-sm)}
+.ach-icon{width:40px;height:40px;flex-shrink:0}
+.ach-body{flex:1;display:flex;flex-direction:column;gap:2px}
+.ach-name{font-weight:700;font-size:.92rem;letter-spacing:-.01em}
+.ach-desc{font-size:.76rem;color:var(--ink-soft);line-height:1.3}
+.ach-reward{font-weight:800;color:var(--green);font-size:.85rem;font-variant-numeric:tabular-nums}
+
+.stats-list{display:flex;flex-direction:column;gap:6px}
+.stat-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 12px;border-radius:var(--radius-sm);background:rgba(15,23,42,.035);font-size:.88rem;transition:background .2s}
+.stat-row:hover{background:rgba(15,23,42,.06)}
+.stat-row b{font-variant-numeric:tabular-nums;font-weight:700;color:var(--ink)}
+.danger-zone{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+.mini-btn{flex:1;border:1px solid var(--panel-line);background:rgba(255,255,255,.7);cursor:pointer;padding:9px;border-radius:10px;font-weight:600;font-size:.78rem;color:var(--ink-soft);transition:background .18s,border-color .18s,transform .12s var(--ease)}
+.mini-btn:hover{background:#fff;transform:translateY(-1px)}
+.mini-btn.danger{color:#b91c1c;border-color:#fecaca}
+.mini-btn.danger:hover{background:#fef2f2;border-color:#fca5a5}
+
+/* ---- prestige tab ---- */
+.prestige-hero{text-align:center;padding:8px 6px 16px}
+.prestige-emoji{font-size:50px;animation:bob 4s ease-in-out infinite;filter:drop-shadow(0 6px 12px rgba(8,47,73,.2))}
+.prestige-hero h3{font-family:var(--font-display);font-weight:600;letter-spacing:-.01em;margin:8px 0;font-size:1.18rem;color:var(--blue-deep)}
+.prestige-hero p{font-size:.82rem;color:var(--ink-soft);line-height:1.5}
+.prestige-btn{width:100%;margin-top:16px;padding:16px;border:none;border-radius:var(--radius);font-family:var(--font-display);font-weight:700;font-size:1rem;letter-spacing:.01em;cursor:pointer;color:#fff;background:linear-gradient(135deg,#22c55e,#16a34a);box-shadow:0 10px 24px -6px rgba(22,163,74,.5),inset 0 1px 0 rgba(255,255,255,.3);transition:transform .16s var(--ease),box-shadow .2s}
+.prestige-btn:not(:disabled):hover{transform:translateY(-2px);box-shadow:0 14px 30px -6px rgba(22,163,74,.55),inset 0 1px 0 rgba(255,255,255,.3)}
+.prestige-btn:not(:disabled):active{transform:translateY(0)}
+.prestige-btn:disabled{background:#cbd5e1;color:#64748b;cursor:not-allowed;box-shadow:none}
+
+/* ===================== FOOTER ===================== */
+.footer{position:relative;z-index:2;text-align:center;padding:22px 18px;display:flex;flex-direction:column;align-items:center;gap:12px;background:linear-gradient(0deg,rgba(8,47,73,.5),rgba(8,47,73,.34));color:#fff;backdrop-filter:blur(14px) saturate(1.4);-webkit-backdrop-filter:blur(14px) saturate(1.4);border-top:1px solid rgba(255,255,255,.1)}
+.share-btn{background:linear-gradient(135deg,#1d9bf0,#0ea5e9);color:#fff;border:none;cursor:pointer;padding:13px 26px;border-radius:var(--radius-pill);font-weight:700;font-size:.98rem;box-shadow:0 10px 24px -6px rgba(29,155,240,.55),inset 0 1px 0 rgba(255,255,255,.25);transition:transform .16s var(--ease),box-shadow .2s;display:inline-flex;align-items:center;gap:9px}
+.share-btn:hover{transform:translateY(-2px);box-shadow:0 14px 30px -6px rgba(29,155,240,.6),inset 0 1px 0 rgba(255,255,255,.25)}
+.share-btn:active{transform:translateY(0)}
+.share-btn svg{width:20px;height:20px}
+.ca-box{display:inline-flex;align-items:center;gap:8px;cursor:pointer;background:rgba(16,185,129,.16);border:1px solid rgba(52,211,153,.45);padding:9px 15px;border-radius:var(--radius-pill);max-width:100%;flex-wrap:wrap;justify-content:center;transition:background .2s,border-color .2s}
+.ca-box:hover{background:rgba(16,185,129,.24);border-color:rgba(52,211,153,.7)}
+.ca-label{color:var(--green-light);font-weight:700}
+.ca-value{font-family:ui-monospace,'SF Mono','Cascadia Code','Courier New',monospace;font-size:.76rem;word-break:break-all;letter-spacing:-.02em}
+.community{font-size:.82rem;opacity:.9}
+.community a{color:var(--gold-light);font-weight:700;text-decoration:none;transition:color .2s}
+.community a:hover{text-decoration:underline}
+
+/* ===================== FLOATING LAYERS: buffs, golden, coins, particles, toasts ===================== */
+.buff-bar{position:fixed;top:74px;left:50%;transform:translateX(-50%);z-index:45;display:flex;gap:8px;flex-wrap:wrap;justify-content:center;pointer-events:none;width:min(94vw,600px)}
+.buff-chip{background:linear-gradient(135deg,#7c3aed,#a855f7);color:#fff;padding:8px 15px;border-radius:var(--radius-pill);font-weight:700;font-size:.82rem;box-shadow:0 8px 20px -6px rgba(124,58,237,.55),inset 0 1px 0 rgba(255,255,255,.25);animation:pop .3s ease;font-variant-numeric:tabular-nums}
+.buff-chip.click{background:linear-gradient(135deg,#ea580c,#f59e0b)}
+
+.golden{position:fixed;left:0;z-index:60;border:none;background:none;cursor:pointer;width:76px;height:76px;padding:0;animation:goldenFloat linear forwards;filter:drop-shadow(0 0 14px rgba(245,158,11,.85))}
+.golden .g-in{display:block;width:100%;height:100%;animation:goldenWobble 1.3s ease-in-out infinite}
+@keyframes goldenFloat{from{transform:translateX(-18vw)}to{transform:translateX(118vw)}}
+@keyframes goldenWobble{0%,100%{transform:translateY(-12px) rotate(-9deg)}50%{transform:translateY(12px) rotate(9deg)}}
+
+.coin-layer{position:fixed;inset:0;pointer-events:none;z-index:55}
+.coin{position:absolute;font-size:1.15rem;transform:translate(-50%,-50%);animation:coinPop .9s ease-out forwards}
+@keyframes coinPop{0%{opacity:1;transform:translate(-50%,-50%) scale(.5)}100%{opacity:0;transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) scale(1.15)}}
+
+.particle-layer{position:fixed;inset:0;pointer-events:none;z-index:50}
+.particle{position:absolute;font-weight:900;font-size:1.3rem;color:var(--green);text-shadow:0 2px 4px rgba(0,0,0,.25);transform:translate(-50%,-50%);animation:floatUp .9s ease-out forwards}
+.particle.crit{color:var(--gold);font-size:1.9rem}
+@keyframes floatUp{0%{opacity:1;transform:translate(-50%,-50%) scale(.8)}100%{opacity:0;transform:translate(-50%,-160%) scale(1.3)}}
+
+.toast-layer{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:100;display:flex;flex-direction:column;gap:8px;align-items:center;width:min(92vw,420px);pointer-events:none}
+.toast{width:100%;padding:13px 18px;border-radius:var(--radius-sm);font-weight:600;font-size:.88rem;color:#fff;background:var(--ink);box-shadow:var(--shadow-lg);opacity:0;transform:translateY(16px);transition:opacity .3s var(--ease),transform .3s var(--ease);text-align:center}
+.toast.show{opacity:1;transform:translateY(0)}
+.toast-good{background:linear-gradient(135deg,var(--green),var(--green-light))}
+.toast-warn{background:linear-gradient(135deg,#ea580c,var(--gold))}
+.toast-info{background:linear-gradient(135deg,var(--blue-deep),var(--blue))}
+
+/* ===================== OVERLAYS: start menu, settings, leaderboard ===================== */
+.overlay{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;padding:18px;background:rgba(8,47,73,.55);backdrop-filter:blur(8px);animation:fade .25s ease}
+.overlay.hidden{display:none}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.menu-card,.modal-card{background:rgba(255,255,255,.92);backdrop-filter:blur(20px) saturate(1.4);-webkit-backdrop-filter:blur(20px) saturate(1.4);border:1px solid rgba(255,255,255,.6);border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);padding:24px;width:100%;max-width:440px;max-height:92vh;overflow-y:auto;animation:rise .32s var(--ease-out)}
+@keyframes rise{from{opacity:0;transform:translateY(18px) scale(.98)}to{opacity:1;transform:none}}
+
+.menu-hero{text-align:center;margin-bottom:16px}
+.menu-logo{width:70px;height:70px;filter:drop-shadow(0 4px 10px rgba(8,47,73,.3))}
+.menu-title{font-family:var(--font-display);font-weight:700;font-size:1.45rem;letter-spacing:-.02em;color:var(--blue-deep);margin-top:8px}
+.menu-tagline{font-size:.9rem;color:var(--gold);font-weight:600}
+.menu-play{width:100%;padding:16px;border:none;border-radius:var(--radius);font-family:var(--font-display);font-size:1.2rem;font-weight:700;letter-spacing:.02em;cursor:pointer;color:#fff;background:linear-gradient(135deg,#fbbf24,#f59e0b 55%,#d97706);box-shadow:0 10px 26px -6px rgba(217,119,6,.55),inset 0 1px 0 rgba(255,255,255,.35);transition:transform .16s var(--ease),box-shadow .2s}
+.menu-play:hover{transform:translateY(-2px);box-shadow:0 14px 32px -6px rgba(217,119,6,.6),inset 0 1px 0 rgba(255,255,255,.35)}
+.menu-play:active{transform:translateY(0)}
+.menu-actions{display:flex;gap:10px;margin-top:12px}
+.menu-btn{flex:1;padding:12px;border:1px solid var(--panel-line);background:rgba(255,255,255,.8);border-radius:var(--radius-sm);font-weight:600;font-size:.9rem;cursor:pointer;color:var(--ink-soft);transition:transform .14s var(--ease),background .2s,box-shadow .2s}
+.menu-btn:hover{transform:translateY(-1px);background:#fff;box-shadow:var(--shadow-sm)}
+.menu-btn.primary{background:var(--blue-deep);color:#fff;border-color:var(--blue-deep)}
+.menu-btn.primary:hover{background:#0c657d}
+
+.promo-strip{margin-top:18px;padding-top:16px;border-top:1px solid var(--panel-line)}
+.promo-head{font-size:.82rem;color:var(--ink-soft);text-align:center;margin-bottom:10px}
+.promo-head b{color:var(--green)}
+.promo-price{color:var(--blue-deep);font-weight:bold}
+.promo-cards{display:flex;flex-direction:column;gap:8px}
+.promo-card{display:flex;align-items:center;gap:12px;padding:11px 13px;border-radius:var(--radius-sm);border:1px solid var(--panel-line);background:linear-gradient(135deg,#fff,#f0fdfa);text-decoration:none;color:var(--ink);transition:transform .14s var(--ease),box-shadow .2s,border-color .2s}
+.promo-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-md);border-color:var(--green-light)}
+.promo-text b{font-weight:700}
+.promo-emoji{font-size:24px}
+.promo-text{display:flex;flex-direction:column;line-height:1.2}
+.promo-text small{color:var(--ink-soft);font-size:.74rem}
+.menu-ca{display:flex;align-items:center;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:12px;cursor:pointer;font-size:.72rem;color:var(--ink-soft)}
+.menu-ca code{font-family:'Courier New',monospace;word-break:break-all;color:var(--blue-deep)}
+.menu-foot{text-align:center;font-size:.72rem;color:var(--ink-soft);margin-top:14px;opacity:.8}
+
+.modal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.modal-head h2{font-family:var(--font-display);font-weight:600;font-size:1.2rem;letter-spacing:-.01em;color:var(--blue-deep)}
+.modal-close{border:none;background:rgba(15,23,42,.06);width:34px;height:34px;border-radius:10px;cursor:pointer;font-size:1rem;color:var(--ink-soft);transition:background .2s,transform .12s var(--ease)}
+.modal-close:hover{background:rgba(15,23,42,.12);transform:rotate(90deg)}
+.set-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px;border-radius:var(--radius-sm);background:rgba(15,23,42,.035);margin-bottom:8px;font-weight:600;font-size:.9rem}
+.set-row.col{flex-direction:column;align-items:stretch}
+.set-row input[type=text]{margin-top:8px;padding:10px;border:1px solid var(--panel-line);border-radius:10px;font-size:.9rem;font-family:inherit}
+.set-row input[type=checkbox]{width:22px;height:22px;accent-color:var(--green);cursor:pointer}
+.set-sub{font-family:var(--font-display);font-weight:600;color:var(--blue-deep);font-size:.7rem;text-transform:uppercase;letter-spacing:.14em;margin:16px 4px 6px}
+.set-foot{text-align:center;font-size:.74rem;color:var(--ink-soft);margin-top:12px}
+
+.lb-scope{text-align:center;font-size:.8rem;color:var(--ink-soft);font-weight:bold;margin-bottom:12px}
+.lb-submit{display:flex;gap:8px;margin-bottom:14px}
+.lb-submit input{flex:1;padding:11px;border:1px solid var(--panel-line);border-radius:12px;font-size:.9rem;font-family:inherit}
+.lb-submit .menu-btn{flex:0 0 auto;white-space:nowrap}
+.lb-list{display:flex;flex-direction:column;gap:6px;min-height:80px}
+.lb-row{display:flex;align-items:center;gap:12px;padding:11px 13px;border-radius:var(--radius-sm);background:rgba(15,23,42,.035);transition:background .2s}
+.lb-row:hover{background:rgba(15,23,42,.06)}
+.lb-row.me{background:linear-gradient(135deg,#ecfdf5,#d1fae5);border:1px solid var(--green-light)}
+.lb-rank{font-weight:800;color:var(--gold);min-width:34px;font-size:.95rem;font-variant-numeric:tabular-nums}
+.lb-name{flex:1;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lb-score{font-weight:800;color:var(--blue-deep);font-variant-numeric:tabular-nums}
+.lb-empty,.lb-loading{text-align:center;color:var(--ink-soft);padding:24px 8px;font-size:.9rem}
+.lb-priv{text-align:center;font-size:.74rem;color:var(--ink-soft);margin-top:12px;line-height:1.4}
+
+body.reduce-motion *{animation:none!important;transition:none!important}
+
+@media (max-width:820px){
+  .layout{grid-template-columns:1fr;padding:12px;gap:12px}
+  .tab-content{max-height:none}
+  .topbar{justify-content:center;text-align:center}
+  .buff-bar{top:auto;bottom:80px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div id="scene"></div>
+
+<header class="topbar">
+  <div class="brand">
+    <svg class="brand-logo" viewBox="0 0 48 48"><circle cx="24" cy="24" r="22" fill="#0891b2"/><path d="M6 30 Q24 20 42 30 L42 42 L6 42 Z" fill="#38bdf8"/><rect x="21" y="16" width="6" height="14" fill="#7c4a03"/><path class="palm-top" d="M24 16 Q14 8 8 14 Q18 12 24 18 Q30 12 40 14 Q34 8 24 16Z" fill="#16a34a"/><circle cx="36" cy="12" r="5" fill="#fcd34d"/></svg>
+    <div class="brand-text">
+      <h1 class="brand-title">$RETIRE Retirement Tycoon</h1>
+      <p class="brand-tagline">Grind once. Retire forever.</p>
+    </div>
+  </div>
+  <div class="header-right">
+    <button id="menuBtn" class="icon-btn" title="Menu">☰</button>
+    <button id="soundBtn" class="icon-btn" title="Toggle sound">🔊</button>
+    <div class="token-ticker" id="tokenTicker" title="Live $RETIRE market data — click to open chart">
+      <span class="ticker-label">$RETIRE</span>
+      <span class="ticker-price" id="tokenPrice">…</span>
+      <span class="ticker-change" id="tokenChange"></span>
+      <span class="ticker-mc" id="tokenMc"></span>
+    </div>
+  </div>
+</header>
+
+<main class="layout">
+  <section class="panel clicker-panel">
+    <div class="level-banner">
+      <div class="level-info">
+        <span class="level-tag" id="levelTag">LVL 1</span>
+        <span class="level-name" id="levelName">Wage Slave</span>
+      </div>
+      <div class="level-progress">
+        <div class="level-progress-fill" id="levelProgressFill"></div>
+        <span class="level-progress-text" id="levelProgressText"></span>
+      </div>
+    </div>
+
+    <div class="fp-display">
+      <div class="fp-value" id="fpValue">0</div>
+      <div class="fp-label">Freedom Points</div>
+      <div class="fp-rates"><span id="fpPerSec">0 FP/sec</span><span class="dot">•</span><span id="fpPerClick">+1 / click</span></div>
+    </div>
+
+    <div class="grind-wrap">
+      <button id="grindButton" class="grind-button" aria-label="Grind for Freedom Points"><span id="grindAvatar"></span></button>
+      <span class="combo-badge" id="comboBadge"></span>
+      <p class="grind-hint">Tap to escape the 9-5 →</p>
+    </div>
+
+    <div class="bonus-row">
+      <button id="walletBtn" class="bonus-chip" title="Connect a Solana wallet (read-only) — bonus scales with verified $RETIRE held">👛 Connect Wallet</button>
+      <span class="bonus-chip static hidden" id="holderChip"></span>
+      <span class="bonus-chip static" id="multiplierChip">✨ x1.0 Multiplier</span>
+    </div>
+  </section>
+
+  <section class="panel shop-panel">
+    <nav class="tabs" role="tablist">
+      <button class="tab active" data-tab="shop">🛒 Upgrades</button>
+      <button class="tab" data-tab="achievements">🏆 Awards</button>
+      <button class="tab" data-tab="prestige">🌴 Retire</button>
+      <button class="tab" data-tab="stats">📊 Stats</button>
+    </nav>
+    <div class="tab-content" id="tab-shop">
+      <div class="qty-row" id="qtyRow">
+        <span class="qty-label">Buy:</span>
+        <button class="qty-btn active" data-qty="1">×1</button>
+        <button class="qty-btn" data-qty="10">×10</button>
+        <button class="qty-btn" data-qty="100">×100</button>
+        <button class="qty-btn" data-qty="max">Max</button>
+      </div>
+      <div class="shop-list" id="shopList"></div>
+    </div>
+    <div class="tab-content hidden" id="tab-achievements"><div class="achievement-list" id="achievementList"></div></div>
+    <div class="tab-content hidden" id="tab-prestige"><div id="prestigePanel"></div></div>
+    <div class="tab-content hidden" id="tab-stats">
+      <div class="stats-list" id="statsList"></div>
+      <div class="danger-zone">
+        <button id="exportBtn" class="mini-btn">⬇️ Export Save</button>
+        <button id="importBtn" class="mini-btn">⬆️ Import Save</button>
+        <button id="resetBtn" class="mini-btn danger">💀 Hard Reset</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <button id="shareBtn" class="share-btn">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.9 1.6h3.6l-7.9 9 9.3 12.3h-7.3l-5.7-7.5-6.6 7.5H.4l8.4-9.6L-.4 1.6h7.5l5.2 6.8 6.6-6.8Zm-1.3 19.5h2L6.5 3.7H4.4L17.6 21Z"/></svg>
+    Share your escape on X
+  </button>
+  <div class="ca-box" id="caBox" title="Click to copy contract address">
+    <span class="ca-label">CA:</span>
+    <code class="ca-value">zGh48JtNHVBb5evgoZLXwgPD2Qu4MhkWdJLGDAupump</code>
+    <span>📋</span>
+  </div>
+  <p class="community">Join the community — <a href="https://x.com/search?q=%24RETIRE" target="_blank" rel="noopener">#RETIRE on X</a> · The Last Play 🕹️</p>
+</footer>
+
+<div id="buffBar" class="buff-bar"></div>
+<div id="goldenLayer"></div>
+<div id="coinLayer" class="coin-layer"></div>
+<div id="particleLayer" class="particle-layer"></div>
+<div id="toastLayer" class="toast-layer" aria-live="polite"></div>
+
+<!-- ===================== START MENU ===================== -->
+<div id="startMenu" class="overlay">
+  <div class="menu-card">
+    <div class="menu-hero">
+      <svg class="menu-logo" viewBox="0 0 48 48"><circle cx="24" cy="24" r="22" fill="#0891b2"/><path d="M6 30 Q24 20 42 30 L42 42 L6 42 Z" fill="#38bdf8"/><rect x="21" y="16" width="6" height="14" fill="#7c4a03"/><path d="M24 16 Q14 8 8 14 Q18 12 24 18 Q30 12 40 14 Q34 8 24 16Z" fill="#16a34a"/><circle cx="36" cy="12" r="5" fill="#fcd34d"/></svg>
+      <h1 class="menu-title">$RETIRE Retirement Tycoon</h1>
+      <p class="menu-tagline">Grind once. Retire forever.</p>
+    </div>
+    <button id="playBtn" class="menu-play">▶ PLAY</button>
+    <div class="menu-actions">
+      <button id="openLeaderboard" class="menu-btn">🏆 Leaderboard</button>
+      <button id="openSettings" class="menu-btn">⚙️ Settings</button>
+    </div>
+    <div class="promo-strip">
+      <div class="promo-head">Powered by <b>$RETIRE</b> <span class="promo-price" id="menuPrice"></span></div>
+      <div class="promo-cards">
+        <a class="promo-card" href="https://jup.ag/swap/SOL-zGh48JtNHVBb5evgoZLXwgPD2Qu4MhkWdJLGDAupump" target="_blank" rel="noopener">
+          <span class="promo-emoji">🚀</span><span class="promo-text"><b>Buy $RETIRE</b><small>Swap on Jupiter</small></span>
+        </a>
+        <a class="promo-card" href="https://dexscreener.com/solana/zGh48JtNHVBb5evgoZLXwgPD2Qu4MhkWdJLGDAupump" target="_blank" rel="noopener">
+          <span class="promo-emoji">📈</span><span class="promo-text"><b>Live Chart</b><small>Price & liquidity</small></span>
+        </a>
+        <a class="promo-card" href="https://x.com/search?q=%24RETIRE" target="_blank" rel="noopener">
+          <span class="promo-emoji">🐦</span><span class="promo-text"><b>Community</b><small>#RETIRE on X</small></span>
+        </a>
+      </div>
+      <div class="menu-ca" id="menuCa" title="Click to copy contract address"><span>CA:</span><code>zGh48JtNHVBb5evgoZLXwgPD2Qu4MhkWdJLGDAupump</code> 📋</div>
+    </div>
+    <p class="menu-foot">The Last Play 🕹️ · Not financial advice · DYOR</p>
+  </div>
+</div>
+
+<!-- ===================== SETTINGS ===================== -->
+<div id="settingsModal" class="overlay hidden">
+  <div class="modal-card">
+    <div class="modal-head"><h2>⚙️ Settings</h2><button class="modal-close" data-close>✕</button></div>
+    <label class="set-row"><span>🔊 Sound effects</span><input type="checkbox" id="setSound"></label>
+    <label class="set-row"><span>🎬 Reduce motion</span><input type="checkbox" id="setMotion"></label>
+    <div class="set-row col"><span>🏷️ Leaderboard display name</span><input type="text" id="setName" maxlength="18" placeholder="Anon Grinder"></div>
+    <div class="set-sub">Save management</div>
+    <div class="danger-zone">
+      <button id="setExport" class="mini-btn">⬇️ Export</button>
+      <button id="setImport" class="mini-btn">⬆️ Import</button>
+      <button id="setReset" class="mini-btn danger">💀 Reset</button>
+    </div>
+    <p class="set-foot">Progress saves automatically to this browser.</p>
+  </div>
+</div>
+
+<!-- ===================== LEADERBOARD ===================== -->
+<div id="leaderboardModal" class="overlay hidden">
+  <div class="modal-card">
+    <div class="modal-head"><h2>🏆 Leaderboard</h2><button class="modal-close" data-close>✕</button></div>
+    <p class="lb-scope" id="lbScope"></p>
+    <div class="lb-submit">
+      <input type="text" id="lbName" maxlength="18" placeholder="Your display name">
+      <button id="lbSubmit" class="menu-btn primary">Submit my score</button>
+    </div>
+    <div class="lb-list" id="lbList"></div>
+    <p class="lb-priv">🔒 Only your display name &amp; Freedom Points are shared — never your wallet, balance, or any personal data.</p>
+  </div>
+</div>
+
+<script>
+/* =========================================================================
+ * CONFIG — all game data (tweak freely to re-balance)
+ * ========================================================================= */
+const CONFIG = {
+  SAVE_KEY:'retire_tycoon_save_v2', TICK_MS:100, AUTOSAVE_MS:15000,
+  BASE_CLICK:1, COST_GROWTH:1.15, MAX_OFFLINE_HOURS:8,
+  CRIT_CHANCE:0.08, CRIT_MULT:8,           // lucky "golden grind" crits
+  COMBO_WINDOW:1200, COMBO_STEP:0.02, COMBO_MAX:49, // rapid-click combo bonus
+  PRESTIGE_REQ:1e6, LEGACY_BONUS:0.03,     // retire mechanic
+  GOLDEN:{minGap:45, maxGap:105, life:13}, // seconds between / lifespan of tickets
+  CONTRACT_ADDRESS:'zGh48JtNHVBb5evgoZLXwgPD2Qu4MhkWdJLGDAupump',
+  PRICE_API:'https://api.dexscreener.com/latest/dex/tokens/', PRICE_REFRESH_MS:60000,
+
+  // Real on-chain balance check — public RPC, read-only, no signing required.
+  // For production traffic swap this for a dedicated RPC (Helius/QuickNode/etc);
+  // the public endpoint is rate-limited but fine for casual verification.
+  SOLANA_RPC:'https://api.mainnet-beta.solana.com',
+  HOLDER_RECHECK_MS:5*60000, // re-verify every 5 min so bonuses reflect current holdings
+  HOLDER_TIERS:[ // sorted low → high; bonus is the highest tier the wallet qualifies for
+    {min:5000,   mult:0.05, name:'Bronze Holder',  emoji:'🥉'},
+    {min:25000,  mult:0.15, name:'Silver Holder',  emoji:'🥈'},
+    {min:100000, mult:0.30, name:'Gold Holder',    emoji:'🥇'},
+    {min:500000, mult:0.50, name:'Diamond Holder', emoji:'💎'},
+  ],
+
+  // Buying 25 of any single item permanently DOUBLES that item's output (milestone).
+  MILESTONE_STEP:25,
+  UPGRADES:[
+    // ---- GRIND GEAR ----
+    {id:'chair',   name:'Ergonomic Chair', tier:'Grind Gear', baseCost:15,    cps:0,    clickAdd:1, desc:'Your spine thanks you. Grind without the hunch.'},
+    {id:'coffee',  name:'Coffee Machine',  tier:'Grind Gear', baseCost:100,   cps:1,    clickAdd:0, desc:'Caffeine: the original productivity token.'},
+    {id:'keyboard',name:'Mechanical Keyboard',tier:'Grind Gear',baseCost:500, cps:0,    clickAdd:3, desc:'Clicky keys, clickier income. Grinding ASMR.'},
+    {id:'monitor', name:'Triple Monitors', tier:'Grind Gear', baseCost:1100,  cps:5,    clickAdd:0, desc:'Three screens of pure, glorious hustle.'},
+    {id:'quitjob', name:'Quit Your Job',   tier:'Grind Gear', baseCost:3000,  cps:12,   clickAdd:2, desc:'Hand in the two-week notice. Freedom intensifies.'},
+    // ---- SIDE INCOME ----
+    {id:'sidehustle',name:'Side Hustle',   tier:'Side Income', baseCost:9000,  cps:45,   clickAdd:0, desc:'Dropshipping artisanal beach sand. It prints.'},
+    {id:'vending', name:'Vending Machines',tier:'Side Income', baseCost:22000, cps:95,   clickAdd:0, desc:'Snacks sold while you nap. Ka-ching.'},
+    {id:'stocks',  name:'Stock Portfolio', tier:'Side Income', baseCost:55000, cps:180,  clickAdd:0, desc:'Diamond hands. Mostly. Down 2% today though.'},
+    {id:'crypto',  name:'$RETIRE Bag',     tier:'Side Income', baseCost:130000,cps:380,  clickAdd:0, desc:'Aped in early. This is not financial advice.'},
+    // ---- REAL ESTATE ----
+    {id:'rental',  name:'First Rental',    tier:'Real Estate', baseCost:300000,cps:650,  clickAdd:0, desc:'Passive income unlocked. The tenants call it home.'},
+    {id:'airbnb',  name:'Airbnb Empire',   tier:'Real Estate', baseCost:750000,cps:1500, clickAdd:0, desc:'Superhost status. The reviews write themselves.'},
+    {id:'bizempire',name:'Business Empire',tier:'Real Estate', baseCost:3e6,   cps:7000, clickAdd:0, desc:'A corner office you never actually visit.'},
+    // ---- LUXURY LIFESTYLE ----
+    {id:'watch',   name:'Luxury Watch Vault',tier:'Luxury Lifestyle',baseCost:5e6,cps:12000,clickAdd:0,desc:'Time is money — and you now own both.'},
+    {id:'lambo',   name:'Lambo Fleet',     tier:'Luxury Lifestyle',baseCost:9e6, cps:22000, clickAdd:0, desc:'Vroom money. A different colour for each day off.'},
+    {id:'sportscar',name:'Hypercar Garage',tier:'Luxury Lifestyle',baseCost:2.2e7,cps:55000,clickAdd:0,desc:'0–60 in the time it takes to check your bags.'},
+    {id:'yacht',   name:'Superyacht',      tier:'Luxury Lifestyle',baseCost:5.5e7,cps:140000,clickAdd:0,desc:'International waters, zero deadlines.'},
+    {id:'mansion', name:'Beachfront Mansion',tier:'Luxury Lifestyle',baseCost:1.3e8,cps:340000,clickAdd:0,desc:'Infinity pool that melts into the sea.'},
+    {id:'jet',     name:'Private Jet',     tier:'Luxury Lifestyle',baseCost:3e8, cps:800000, clickAdd:0, desc:'Wheels up whenever the mood strikes.'},
+    // ---- DYNASTY ----
+    {id:'island',  name:'Private Island',  tier:'Dynasty',    baseCost:8e8,   cps:2.2e6, clickAdd:0, desc:'No wifi unless you say so. Pure bliss.'},
+    {id:'vineyard',name:'Vineyard & Winery',tier:'Dynasty',   baseCost:1.6e9, cps:4.5e6, clickAdd:0, desc:'Your own label. Aged, like your worries.'},
+    {id:'trust',   name:'Family Trust',    tier:'Dynasty',    baseCost:5e9,   cps:1.5e7, clickAdd:0, desc:'Generational wealth secured. Retire the bloodline.'},
+    {id:'space',   name:'$RETIRE Space Program',tier:'Dynasty',baseCost:1.2e10,cps:4e7, clickAdd:0, desc:'Retirement is boundless. Literally, to the moon.'},
+  ],
+  LEVELS:[
+    {req:0,     name:'Wage Slave',        mult:1.0, scene:0},
+    {req:500,   name:'Cubicle Escapee',   mult:1.1, scene:0},
+    {req:5000,  name:'Side Hustler',      mult:1.25,scene:1},
+    {req:40000, name:'Freelancer',        mult:1.5, scene:1},
+    {req:250000,name:'Investor',          mult:1.8, scene:2},
+    {req:1.5e6, name:'Landlord',          mult:2.2, scene:2},
+    {req:1e7,   name:'Beach Bum',         mult:2.8, scene:3},
+    {req:6e7,   name:'Yacht Owner',       mult:3.5, scene:3},
+    {req:3e8,   name:'Island Overlord',   mult:4.5, scene:4},
+    {req:2e9,   name:'Retire Your Bloodline',mult:6.0,scene:4},
+  ],
+  // Golden-ticket rewards
+  GOLDEN_BUFFS:[
+    {icon:'🌀',name:'Freedom Frenzy',kind:'prod', mult:7,dur:20,toast:'x7 production for 20s!'},
+    {icon:'⚡',name:'Grind Frenzy',  kind:'click',mult:7,dur:16,toast:'x7 per click for 16s!'},
+    {icon:'💰',name:'Lucky Payout',  kind:'cash',           toast:'Instant Freedom Points!'},
+  ],
+  ACHIEVEMENTS:[
+    {id:'firstclick',name:'First Grind',   reward:.02,desc:'Click the grind button once.',        check:s=>s.totalClicks>=1},
+    {id:'click100',  name:'Carpal Tunnel', reward:.05,desc:'Grind 100 times by hand.',            check:s=>s.totalClicks>=100},
+    {id:'click1k',   name:'Grind Machine', reward:.1, desc:'Grind 1,000 times.',                  check:s=>s.totalClicks>=1000},
+    {id:'combo25',   name:'Combo Fiend',   reward:.08,desc:'Reach a 25-click combo.',             check:s=>s.bestCombo>=25},
+    {id:'firstbuy',  name:'Treat Yourself',reward:.02,desc:'Buy your first upgrade.',             check:s=>Object.values(s.owned).some(n=>n>0)},
+    {id:'quit',      name:'I Quit!',       reward:.1, desc:'Buy "Quit Your Job".',                check:s=>(s.owned.quitjob||0)>=1},
+    {id:'golden',    name:'Golden Touch',  reward:.1, desc:'Catch a floating Freedom Ticket.',    check:s=>s.goldenCaught>=1},
+    {id:'landlord',  name:'Rent Is Due',   reward:.1, desc:'Own 5 Rental properties.',            check:s=>(s.owned.rental||0)>=5},
+    {id:'lambo',     name:'Wen Lambo',     reward:.15,desc:'Buy your first Lambo.',               check:s=>(s.owned.lambo||0)>=1},
+    {id:'collector', name:'Time Is Money',  reward:.1, desc:'Own a Luxury Watch Vault.',           check:s=>(s.owned.watch||0)>=1},
+    {id:'gearhead',  name:'Gearhead',       reward:.12,desc:'Own a Hypercar Garage.',              check:s=>(s.owned.sportscar||0)>=1},
+    {id:'milestone', name:'Bulk Buyer',     reward:.12,desc:'Own 25 of any single upgrade (x2 bonus!).',check:s=>Object.values(s.owned).some(x=>x>=25)},
+    {id:'islander',  name:'Off The Grid',  reward:.2, desc:'Own a Private Island.',               check:s=>(s.owned.island||0)>=1},
+    {id:'jetset',    name:'Jet Set',        reward:.15,desc:'Own a Private Jet.',                   check:s=>(s.owned.jet||0)>=1},
+    {id:'astronaut', name:'To The Moon 🚀', reward:.35,desc:'Fund the $RETIRE Space Program.',     check:s=>(s.owned.space||0)>=1},
+    {id:'holder',    name:'Verified Holder',reward:.05,desc:'Connect a wallet holding 5,000+ $RETIRE.',check:s=>s.walletBonus>0},
+    {id:'whale',     name:'Whale Status',  reward:.2, desc:'Verify a wallet holding 500,000+ $RETIRE.',check:s=>(s.walletBalance||0)>=500000},
+    {id:'millionaire',name:'FP Millionaire',reward:.15,desc:'Bank 1,000,000 lifetime Freedom Points.',check:s=>s.lifetime>=1e6},
+    {id:'reborn',    name:'New Bloodline', reward:.15,desc:'Retire & reincarnate once.',          check:s=>s.prestiges>=1},
+    {id:'bloodline', name:'Generational Wealth',reward:.5,desc:'Reach the final retirement level.',check:s=>s.level>=9},
+  ],
+};
+
+/* =========================================================================
+ * SOUND — tiny WebAudio synth (no asset files, respects a mute toggle)
+ * ========================================================================= */
+const Sound = {
+  ctx:null, muted:false,
+  init(){ try{ this.ctx=new (window.AudioContext||window.webkitAudioContext)(); this.muted=localStorage.getItem('retire_muted')==='1'; }catch(e){} },
+  resume(){ if(this.ctx&&this.ctx.state==='suspended') this.ctx.resume(); },
+  beep(freq,dur,type='sine',vol=0.14,when=0){
+    if(!this.ctx||this.muted)return;
+    const t=this.ctx.currentTime+when, o=this.ctx.createOscillator(), g=this.ctx.createGain();
+    o.type=type; o.frequency.setValueAtTime(freq,t);
+    g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(vol,t+0.012);
+    g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+    o.connect(g); g.connect(this.ctx.destination); o.start(t); o.stop(t+dur+0.02);
+  },
+  click(combo){ this.beep(300+Math.min(combo,40)*14,0.07,'square',0.07); },
+  buy(){ this.beep(440,0.09,'triangle',0.13); this.beep(660,0.12,'triangle',0.11,0.07); },
+  crit(){ this.beep(880,0.09,'sawtooth',0.12); this.beep(1320,0.16,'square',0.1,0.07); },
+  levelup(){ [523,659,784,1046].forEach((f,i)=>this.beep(f,0.22,'triangle',0.13,i*0.09)); },
+  golden(){ [1046,1318,1568,2093].forEach((f,i)=>this.beep(f,0.16,'sine',0.12,i*0.05)); },
+  buff(){ [784,988,1318].forEach((f,i)=>this.beep(f,0.22,'sawtooth',0.11,i*0.07)); },
+  prestige(){ [261,329,392,523,659,784].forEach((f,i)=>this.beep(f,0.5,'triangle',0.15,i*0.11)); },
+  toggle(){ this.muted=!this.muted; try{localStorage.setItem('retire_muted',this.muted?'1':'0');}catch(e){} if(!this.muted)this.beep(660,0.1,'triangle'); return this.muted; },
+};
+
+/* =========================================================================
+ * ART — inline SVG icons, avatars & scenes (lightweight, no external assets)
+ * ========================================================================= */
+const ART = {
+  badge(glyph,c1,c2){
+    const id='g'+c1.slice(1)+c2.slice(1);
+    return `<svg class="shop-icon" viewBox="0 0 48 48"><defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${c1}"/><stop offset="1" stop-color="${c2}"/></linearGradient></defs><rect x="2" y="2" width="44" height="44" rx="12" fill="url(#${id})"/>${glyph}</svg>`;
+  },
+  icons:{
+    chair:()=>ART.badge(`<rect x="16" y="12" width="6" height="16" rx="2" fill="#fff"/><rect x="14" y="26" width="14" height="6" rx="2" fill="#fff"/><rect x="19" y="32" width="3" height="8" fill="#fff"/><rect x="14" y="39" width="14" height="3" rx="1.5" fill="#fff"/>`,'#a3a3a3','#525252'),
+    coffee:()=>ART.badge(`<path d="M14 20h16v10a6 6 0 0 1-6 6h-4a6 6 0 0 1-6-6z" fill="#fff"/><path d="M30 22h4a4 4 0 0 1 0 8h-4" fill="none" stroke="#fff" stroke-width="2.5"/><path d="M18 12c0 2-2 3-2 5m6-5c0 2-2 3-2 5" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round"/>`,'#a16207','#78350f'),
+    monitor:()=>ART.badge(`<rect x="10" y="12" width="28" height="18" rx="2" fill="#fff"/><rect x="13" y="15" width="22" height="12" fill="#22d3ee"/><rect x="21" y="30" width="6" height="5" fill="#fff"/><rect x="16" y="35" width="16" height="3" rx="1.5" fill="#fff"/>`,'#0ea5e9','#0369a1'),
+    quitjob:()=>ART.badge(`<rect x="15" y="10" width="18" height="24" rx="2" fill="#fff"/><path d="M19 16h10M19 21h10M19 26h6" stroke="#dc2626" stroke-width="2" stroke-linecap="round"/><path d="M26 30l4 8 3-3 3 3-4-8z" fill="#dc2626"/>`,'#f87171','#b91c1c'),
+    sidehustle:()=>ART.badge(`<rect x="12" y="18" width="24" height="16" rx="2" fill="#fff"/><path d="M19 18v-3a3 3 0 0 1 3-3h4a3 3 0 0 1 3 3v3" fill="none" stroke="#fff" stroke-width="2.5"/><rect x="12" y="24" width="24" height="3" fill="#7c3aed"/>`,'#a78bfa','#6d28d9'),
+    stocks:()=>ART.badge(`<path d="M12 34l7-8 5 4 10-14" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M29 16h6v6" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>`,'#34d399','#047857'),
+    rental:()=>ART.badge(`<path d="M24 12 10 24h4v12h20V24h4z" fill="#fff"/><rect x="20" y="28" width="8" height="8" fill="#0891b2"/>`,'#38bdf8','#0e7490'),
+    bizempire:()=>ART.badge(`<rect x="14" y="12" width="20" height="26" fill="#fff"/><g fill="#0891b2"><rect x="17" y="16" width="4" height="4"/><rect x="27" y="16" width="4" height="4"/><rect x="17" y="23" width="4" height="4"/><rect x="27" y="23" width="4" height="4"/><rect x="22" y="30" width="4" height="8"/></g>`,'#64748b','#1e293b'),
+    lambo:()=>ART.badge(`<path d="M10 30l4-8h12l6 6h6v6H10z" fill="#fff"/><circle cx="17" cy="34" r="3" fill="#1e293b"/><circle cx="31" cy="34" r="3" fill="#1e293b"/>`,'#fb7185','#be123c'),
+    yacht:()=>ART.badge(`<path d="M10 30h28l-4 6H14z" fill="#fff"/><rect x="20" y="16" width="10" height="10" fill="#fff"/><rect x="22" y="19" width="2" height="2" fill="#0891b2"/><rect x="26" y="19" width="2" height="2" fill="#0891b2"/>`,'#38bdf8','#075985'),
+    island:()=>ART.badge(`<path class="palm-top" d="M24 16c-6-4-10-1-12 2 5-2 8 0 10 3z" fill="#16a34a"/><path class="palm-top" d="M24 16c6-4 10-1 12 2-5-2-8 0-10 3z" fill="#16a34a"/><rect x="23" y="16" width="3" height="12" fill="#92400e"/><path d="M12 34q12-6 24 0v4H12z" fill="#fde68a"/>`,'#fcd34d','#f59e0b'),
+    trust:()=>ART.badge(`<path d="M24 10 12 18h24z" fill="#fff"/><g fill="#fff"><rect x="14" y="20" width="3" height="12"/><rect x="21" y="20" width="3" height="12"/><rect x="28" y="20" width="3" height="12"/></g><rect x="12" y="33" width="24" height="4" fill="#fff"/>`,'#fcd34d','#b45309'),
+    keyboard:()=>ART.badge(`<rect x="9" y="17" width="30" height="15" rx="3" fill="#fff"/><g fill="#4338ca"><rect x="12" y="20" width="4" height="3" rx="1"/><rect x="18" y="20" width="4" height="3" rx="1"/><rect x="24" y="20" width="4" height="3" rx="1"/><rect x="30" y="20" width="4" height="3" rx="1"/><rect x="15" y="26" width="18" height="3" rx="1.5"/></g>`,'#818cf8','#4338ca'),
+    vending:()=>ART.badge(`<rect x="15" y="10" width="18" height="30" rx="2" fill="#fff"/><rect x="18" y="13" width="8" height="15" rx="1" fill="#0891b2"/><g fill="#fcd34d"><rect x="19" y="14" width="2.5" height="3.5"/><rect x="22.5" y="14" width="2.5" height="3.5"/><rect x="19" y="19" width="2.5" height="3.5"/><rect x="22.5" y="19" width="2.5" height="3.5"/></g><rect x="28" y="14" width="3.5" height="12" rx="1" fill="#cbd5e1"/><rect x="18" y="32" width="12" height="4" rx="1" fill="#94a3b8"/>`,'#fb7185','#be123c'),
+    crypto:()=>ART.badge(`<circle cx="24" cy="24" r="13" fill="#fff"/><text x="24" y="30" font-size="16" text-anchor="middle" fill="#047857" font-weight="bold">$</text>`,'#34d399','#047857'),
+    airbnb:()=>ART.badge(`<rect x="13" y="14" width="22" height="24" rx="2" fill="#fff"/><g fill="#e11d48"><rect x="17" y="18" width="4" height="4"/><rect x="27" y="18" width="4" height="4"/><rect x="17" y="25" width="4" height="4"/><rect x="27" y="25" width="4" height="4"/></g><rect x="22" y="31" width="4" height="7" fill="#e11d48"/>`,'#fb7185','#e11d48'),
+    watch:()=>ART.badge(`<rect x="20" y="9" width="8" height="9" rx="2" fill="#fff"/><rect x="20" y="30" width="8" height="9" rx="2" fill="#fff"/><circle cx="24" cy="24" r="10" fill="#fff"/><circle cx="24" cy="24" r="7" fill="#b45309"/><path d="M24 24V19M24 24l4 3" stroke="#fff" stroke-width="2" stroke-linecap="round"/>`,'#fcd34d','#b45309'),
+    sportscar:()=>ART.badge(`<path d="M9 31c1-5 5-7 9-7l3-4h8l5 4c4 0 6 2 6 7h-4a3.5 3.5 0 0 1-7 0H20a3.5 3.5 0 0 1-7 0z" fill="#fff"/><path d="M22 21h6l3 3H20z" fill="#fed7aa"/><circle cx="17" cy="31" r="3" fill="#1e293b"/><circle cx="31" cy="31" r="3" fill="#1e293b"/>`,'#f97316','#c2410c'),
+    mansion:()=>ART.badge(`<path d="M8 36V22l16-9 16 9v14z" fill="#fff"/><g fill="#0369a1"><rect x="13" y="25" width="4" height="6"/><rect x="31" y="25" width="4" height="6"/><rect x="21" y="26" width="6" height="10"/></g><rect x="9" y="21" width="30" height="3" fill="#e2e8f0"/>`,'#38bdf8','#0369a1'),
+    jet:()=>ART.badge(`<path d="M24 8c2 0 3 3 3 8l11 7v3l-11-3v6l4 3v2l-7-2-7 2v-2l4-3v-6l-11 3v-3l11-7c0-5 1-8 3-8z" fill="#fff"/>`,'#60a5fa','#1e40af'),
+    vineyard:()=>ART.badge(`<g fill="#fff"><circle cx="20" cy="26" r="3"/><circle cx="26" cy="26" r="3"/><circle cx="23" cy="31" r="3"/><circle cx="29" cy="31" r="3"/><circle cx="26" cy="36" r="3"/></g><path d="M24 22l4-6" stroke="#fff" stroke-width="2" stroke-linecap="round"/><path d="M28 16c3-2 6-1 6-1s-1 4-4 4z" fill="#fff"/>`,'#a78bfa','#6d28d9'),
+    space:()=>ART.badge(`<path d="M24 8c5 4 7 11 7 18l-3 4h-8l-3-4c0-7 2-14 7-18z" fill="#fff"/><circle cx="24" cy="19" r="3" fill="#3730a3"/><path d="M17 28l-4 8 6-3zM31 28l4 8-6-3z" fill="#fff"/><path d="M20 31h8l-4 9z" fill="#f59e0b"/>`,'#818cf8','#3730a3'),
+  },
+  achBadge(on){
+    const c=on?'#f59e0b':'#94a3b8';
+    return `<svg class="ach-icon" viewBox="0 0 40 40"><circle cx="20" cy="18" r="11" fill="${c}"/><circle cx="20" cy="18" r="7" fill="#fff" opacity="${on?0.9:0.4}"/><path d="M15 27l-2 9 7-4 7 4-2-9" fill="${c}"/><text x="20" y="22.5" font-size="11" text-anchor="middle" fill="${c}" font-weight="bold">★</text></svg>`;
+  },
+  golden(){
+    return `<span class="g-in"><svg viewBox="0 0 64 64"><defs><radialGradient id="gt" cx="40%" cy="35%"><stop offset="0" stop-color="#fef9c3"/><stop offset="1" stop-color="#f59e0b"/></radialGradient></defs><circle cx="32" cy="32" r="28" fill="url(#gt)" stroke="#d97706" stroke-width="3"/><text x="32" y="43" font-size="30" text-anchor="middle" fill="#7c2d12" font-weight="bold">$</text><circle cx="23" cy="21" r="4" fill="#fff" opacity=".85"/></svg></span>`;
+  },
+  // Grind-button characters — evolve office drone → zen retiree
+  avatars:[
+    `<svg viewBox="0 0 100 100"><g class="breathe"><path d="M28 92V72c0-12 9-20 22-20s22 8 22 20v20z" fill="#334155"/><path d="M50 56 44 92h12z" fill="#e2e8f0"/><path d="M50 56l-4 14 4 4 4-4z" fill="#dc2626"/><circle cx="50" cy="40" r="17" fill="#f6c99a"/><path d="M33 38a17 17 0 0 1 34 0c-4-4-10-6-17-6s-13 2-17 6z" fill="#3f3f46"/><path d="M41 40h5M54 40h5" stroke="#333" stroke-width="2" stroke-linecap="round"/><path d="M44 49q6 2 12 0" stroke="#8a5a3b" stroke-width="2" fill="none" stroke-linecap="round"/><circle cx="64" cy="34" r="2.5" fill="#7dd3fc"/></g></svg>`,
+    `<svg viewBox="0 0 100 100"><g class="breathe"><path d="M28 92V72c0-12 9-20 22-20s22 8 22 20v20z" fill="#10b981"/><path d="M42 54h16v12H42z" fill="#0d9488"/><circle cx="50" cy="40" r="17" fill="#f6c99a"/><path d="M33 37a17 17 0 0 1 34 0c-5-3-11-4-17-4s-12 1-17 4z" fill="#7c4a03"/><rect x="30" y="36" width="7" height="12" rx="3.5" fill="#0891b2"/><rect x="63" y="36" width="7" height="12" rx="3.5" fill="#0891b2"/><path d="M33 41a17 17 0 0 1 34 0" fill="none" stroke="#0891b2" stroke-width="3"/><circle cx="43" cy="41" r="2" fill="#333"/><circle cx="57" cy="41" r="2" fill="#333"/><path d="M44 47q6 5 12 0" stroke="#8a5a3b" stroke-width="2.4" fill="none" stroke-linecap="round"/></g></svg>`,
+    `<svg viewBox="0 0 100 100"><g class="breathe"><path d="M28 92V72c0-12 9-20 22-20s22 8 22 20v20z" fill="#0f172a"/><path d="M50 56 45 92h10z" fill="#f8fafc"/><path d="M50 56l-3 12 3 3 3-3z" fill="#f59e0b"/><circle cx="50" cy="40" r="17" fill="#f6c99a"/><path d="M33 36a17 17 0 0 1 34 0c-5-3-11-4-17-4s-12 1-17 4z" fill="#1e293b"/><rect x="37" y="37" width="11" height="8" rx="2" fill="#111"/><rect x="52" y="37" width="11" height="8" rx="2" fill="#111"/><path d="M48 41h4" stroke="#111" stroke-width="2"/><path d="M44 49q6 2 12 0" stroke="#8a5a3b" stroke-width="2.2" fill="none" stroke-linecap="round"/></g></svg>`,
+    `<svg viewBox="0 0 100 100"><g class="breathe"><path d="M28 92V72c0-12 9-20 22-20s22 8 22 20v20z" fill="#06b6d4"/><g fill="#fbbf24"><circle cx="40" cy="72" r="3"/><circle cx="54" cy="78" r="3"/><circle cx="60" cy="66" r="3"/><circle cx="34" cy="82" r="3"/></g><circle cx="50" cy="41" r="17" fill="#e0a877"/><path d="M44 50q6 4 12 0" stroke="#7c3f1d" stroke-width="2.4" fill="none" stroke-linecap="round"/><rect x="38" y="38" width="24" height="7" rx="3.5" fill="#0ea5e9" opacity=".9"/><path d="M28 34h44l-6-4H34z" fill="#eab308"/><path d="M22 34q28 8 56 0v3q-28 8-56 0z" fill="#ca8a04"/></g></svg>`,
+    `<svg viewBox="0 0 100 100"><g class="breathe"><path d="M26 92V74c0-13 10-22 24-22s24 9 24 22v18z" fill="#f8fafc"/><path d="M50 54v38" stroke="#fcd34d" stroke-width="2"/><circle cx="50" cy="42" r="17" fill="#e0a877"/><path d="M32 30l6 8 6-9 6 9 6-9 6 9 6-8-3 12H35z" fill="#fcd34d"/><circle cx="41" cy="27" r="2" fill="#ef4444"/><circle cx="59" cy="27" r="2" fill="#22d3ee"/><circle cx="50" cy="24" r="2.2" fill="#a78bfa"/><path d="M43 42h5M52 42h5" stroke="#333" stroke-width="2" stroke-linecap="round"/><path d="M43 49q7 6 14 0" stroke="#7c3f1d" stroke-width="2.6" fill="none" stroke-linecap="round"/><path d="M70 60l8-6-4 12z" fill="#f472b6"/><rect x="72.5" y="60" width="1.6" height="15" fill="#fff"/></g></svg>`,
+  ],
+  scene(stage){
+    const skies=[['#cbd5e1','#94a3b8'],['#bae6fd','#7dd3fc'],['#a5f3fc','#38bdf8'],['#7dd3fc','#fcd34d'],['#38bdf8','#fbbf24']];
+    const [s1,s2]=skies[stage];
+    const sun=stage>=1?`<circle cx="820" cy="90" r="46" fill="#fde047" opacity=".95"/>`:`<circle cx="820" cy="90" r="34" fill="#e2e8f0"/>`;
+    const clouds=stage>=1?`<g fill="#fff" opacity=".85"><g class="cloud" style="animation-duration:60s"><ellipse cx="120" cy="110" rx="46" ry="20"/><ellipse cx="160" cy="100" rx="34" ry="18"/></g><g class="cloud" style="animation-duration:90s;animation-delay:-30s"><ellipse cx="400" cy="70" rx="40" ry="16"/><ellipse cx="435" cy="62" rx="28" ry="14"/></g></g>`:'';
+    let fg='';
+    if(stage===0){
+      fg=`<rect x="0" y="440" width="960" height="200" fill="#9ca3af"/><rect x="0" y="300" width="960" height="140" fill="#d1d5db"/><g fill="#6b7280"><rect x="60" y="330" width="140" height="110"/><rect x="260" y="330" width="140" height="110"/><rect x="560" y="330" width="140" height="110"/><rect x="760" y="330" width="140" height="110"/></g><g fill="#374151"><rect x="90" y="360" width="80" height="48"/><rect x="590" y="360" width="80" height="48"/></g>`;
+    }else if(stage===1){
+      fg=`<rect x="0" y="460" width="960" height="180" fill="#a3e635" opacity=".5"/><rect x="0" y="360" width="960" height="100" fill="#bbf7d0"/><g transform="translate(120 300)"><rect x="-14" y="60" width="28" height="60" fill="#92400e"/><ellipse cx="0" cy="40" rx="46" ry="42" fill="#16a34a"/></g><g transform="translate(760 320)"><rect x="-12" y="40" width="24" height="60" fill="#a16207"/><circle cx="0" cy="20" r="34" fill="#22c55e"/></g>`;
+    }else if(stage===2){
+      fg=`<rect x="0" y="480" width="960" height="160" fill="#0369a1"/><g fill="#1e3a5f">${[80,180,300,420,560,700,820].map((x,i)=>`<rect x="${x}" y="${300+(i%3)*30}" width="90" height="${300-(i%3)*30}"/>`).join('')}</g><g fill="#fcd34d" opacity=".8">${[100,210,330,450,590,730,850].map(x=>[0,1,2,3].map(r=>`<rect x="${x}" y="${330+r*40}" width="12" height="16"/>`).join('')).join('')}</g>`;
+    }else if(stage===3){
+      fg=`<rect x="0" y="430" width="960" height="90" fill="#0ea5e9"/><path d="M0 430q480 40 960 0v20H0z" fill="#38bdf8"/><rect x="0" y="500" width="960" height="140" fill="#fde68a"/><g transform="translate(150 340)"><rect x="-10" y="60" width="20" height="120" fill="#92400e"/><path class="palm-top" d="M0 60Q-70 30-90 55Q-40 45 0 70Q40 45 90 55Q70 30 0 60Z" fill="#16a34a"/></g><g transform="translate(780 360)" class="floaty"><ellipse cx="0" cy="40" rx="70" ry="14" fill="#f87171"/><rect x="-4" y="-30" width="8" height="70" fill="#334155"/></g>`;
+    }else{
+      fg=`<rect x="0" y="420" width="960" height="220" fill="#0284c7"/><path d="M0 420q480 50 960 0v20H0z" fill="#0ea5e9"/><g transform="translate(480 470)"><ellipse cx="0" cy="60" rx="220" ry="46" fill="#fde68a"/><g transform="translate(0 -30)"><rect x="-10" y="20" width="20" height="80" fill="#92400e"/><path class="palm-top" d="M0 20Q-80 -12-104 18Q-46 6 0 34Q46 6 104 18Q80 -12 0 20Z" fill="#16a34a"/></g></g><g transform="translate(160 400)" class="floaty"><path d="M-60 40h120l-16 26H-44z" fill="#f8fafc"/><rect x="-30" y="10" width="60" height="30" fill="#e2e8f0"/></g><path d="M60 120l4 12 12 1-9 8 3 12-10-7-10 7 3-12-9-8 12-1z" fill="#fcd34d"/>`;
+    }
+    return `<svg viewBox="0 0 960 640" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="sky${stage}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${s1}"/><stop offset="1" stop-color="${s2}"/></linearGradient></defs><rect width="960" height="640" fill="url(#sky${stage})"/>${sun}${clouds}${fg}</svg>`;
+  },
+};
+
+/* =========================================================================
+ * STATE — source of truth + derived economy + persistence
+ * ========================================================================= */
+const State = {
+  fp:0, lifetime:0, owned:{}, achievements:{}, totalClicks:0,
+  walletBonus:0, walletAddress:null, walletBalance:0, walletTier:null, createdAt:Date.now(), level:0,
+  legacy:0, prestiges:0, goldenCaught:0, bestCombo:0,
+  allTimeEarned:0,     // leaderboard score — never resets, even on prestige
+  playerName:'',       // opt-in leaderboard display name
+  // runtime-only (not persisted)
+  activeBuffs:[], combo:0, lastClick:0,
+
+  computeLevel(){let l=0;for(let i=0;i<CONFIG.LEVELS.length;i++)if(this.lifetime>=CONFIG.LEVELS[i].req)l=i;this.level=l;return l;},
+  buffMult(kind){const now=Date.now();let m=1;for(const b of this.activeBuffs)if(b.kind===kind&&b.until>now)m*=b.mult;return m;},
+  multiplier(){
+    const lm=CONFIG.LEVELS[this.computeLevel()].mult;
+    let am=1;for(const a of CONFIG.ACHIEVEMENTS)if(this.achievements[a.id])am+=a.reward;
+    return lm*am*(1+this.walletBonus)*(1+this.legacy*CONFIG.LEGACY_BONUS);
+  },
+  // Every MILESTONE_STEP owned doubles that item's output.
+  milestoneMult(owned){return Math.pow(2,Math.floor(owned/CONFIG.MILESTONE_STEP));},
+  clickValue(){let b=CONFIG.BASE_CLICK;for(const u of CONFIG.UPGRADES){const o=this.owned[u.id]||0;if(o&&u.clickAdd)b+=o*u.clickAdd*this.milestoneMult(o);}return b*this.multiplier()*this.buffMult('click');},
+  perSecond(){let c=0;for(const u of CONFIG.UPGRADES){const o=this.owned[u.id]||0;if(o&&u.cps)c+=o*u.cps*this.milestoneMult(o);}return c*this.multiplier()*this.buffMult('prod');},
+  costOf(u){return Math.ceil(u.baseCost*Math.pow(CONFIG.COST_GROWTH,this.owned[u.id]||0));},
+  canAfford(u){return this.fp>=this.costOf(u);},
+  // ---- bulk buying (closed-form geometric-series cost) ----
+  bulkCost(u,k){const g=CONFIG.COST_GROWTH,o=this.owned[u.id]||0,start=u.baseCost*Math.pow(g,o);return Math.ceil(start*(Math.pow(g,k)-1)/(g-1));},
+  maxAffordable(u){const g=CONFIG.COST_GROWTH,o=this.owned[u.id]||0,start=u.baseCost*Math.pow(g,o);if(this.fp<start)return 0;return Math.max(0,Math.floor(Math.log(1+this.fp*(g-1)/start)/Math.log(g)));},
+  buyMany(u,k){if(k<=0)return 0;const cost=this.bulkCost(u,k);if(this.fp<cost)return 0;this.fp-=cost;this.owned[u.id]=(this.owned[u.id]||0)+k;return k;},
+  earn(a){this.fp+=a;this.lifetime+=a;this.allTimeEarned+=a;},
+  buy(u){const c=this.costOf(u);if(this.fp<c)return false;this.fp-=c;this.owned[u.id]=(this.owned[u.id]||0)+1;return true;},
+  pendingLegacy(){return Math.floor(Math.pow(this.lifetime/CONFIG.PRESTIGE_REQ,0.5));},
+
+  serialize(){return JSON.stringify({fp:this.fp,lifetime:this.lifetime,owned:this.owned,achievements:this.achievements,totalClicks:this.totalClicks,walletBonus:this.walletBonus,walletAddress:this.walletAddress,walletBalance:this.walletBalance,walletTier:this.walletTier,lastSeen:Date.now(),createdAt:this.createdAt,legacy:this.legacy,prestiges:this.prestiges,goldenCaught:this.goldenCaught,bestCombo:this.bestCombo,allTimeEarned:this.allTimeEarned,playerName:this.playerName});},
+  save(){try{localStorage.setItem(CONFIG.SAVE_KEY,this.serialize());}catch(e){console.warn('save failed',e);}},
+  load(){
+    let off=0;
+    try{const raw=localStorage.getItem(CONFIG.SAVE_KEY);if(!raw)return 0;const d=JSON.parse(raw);
+      this.fp=n(d.fp);this.lifetime=n(d.lifetime);this.owned=d.owned||{};this.achievements=d.achievements||{};
+      this.totalClicks=n(d.totalClicks);this.walletBonus=n(d.walletBonus);this.walletAddress=d.walletAddress||null;
+      this.walletBalance=n(d.walletBalance);this.walletTier=d.walletTier||null;
+      this.createdAt=d.createdAt||Date.now();this.legacy=n(d.legacy);this.prestiges=n(d.prestiges);
+      this.goldenCaught=n(d.goldenCaught);this.bestCombo=n(d.bestCombo);
+      this.allTimeEarned=n(d.allTimeEarned)||n(d.lifetime);this.playerName=d.playerName||'';
+      if(d.lastSeen)off=Math.max(0,(Date.now()-d.lastSeen)/1000);
+    }catch(e){console.warn('load failed',e);}
+    this.computeLevel();return off;
+  },
+  // Soft reset for prestige (keeps legacy/achievements); flag=false keeps them.
+  softReset(){this.fp=0;this.lifetime=0;this.owned={};this.level=0;this.combo=0;this.activeBuffs=[];},
+  hardReset(){localStorage.removeItem(CONFIG.SAVE_KEY);Object.assign(this,{fp:0,lifetime:0,owned:{},achievements:{},totalClicks:0,walletBonus:0,walletAddress:null,walletBalance:0,walletTier:null,level:0,legacy:0,prestiges:0,goldenCaught:0,bestCombo:0,allTimeEarned:0,activeBuffs:[],combo:0});this.createdAt=Date.now();},
+};
+function n(v){const x=Number(v);return Number.isFinite(x)&&x>=0?x:0;}
+
+/* =========================================================================
+ * UI — all DOM rendering
+ * ========================================================================= */
+const UI = {
+  el:{},
+  init(){
+    const $=id=>document.getElementById(id);
+    this.el={fpValue:$('fpValue'),fpPerSec:$('fpPerSec'),fpPerClick:$('fpPerClick'),
+      levelTag:$('levelTag'),levelName:$('levelName'),levelProgressFill:$('levelProgressFill'),levelProgressText:$('levelProgressText'),
+      multiplierChip:$('multiplierChip'),shopList:$('shopList'),achievementList:$('achievementList'),statsList:$('statsList'),prestigePanel:$('prestigePanel'),
+      scene:$('scene'),grindAvatar:$('grindAvatar'),tokenPrice:$('tokenPrice'),tokenChange:$('tokenChange'),tokenMc:$('tokenMc'),
+      particleLayer:$('particleLayer'),toastLayer:$('toastLayer'),coinLayer:$('coinLayer'),buffBar:$('buffBar'),
+      comboBadge:$('comboBadge'),walletBtn:$('walletBtn'),holderChip:$('holderChip'),clickerPanel:document.querySelector('.clicker-panel')};
+    this.buildShop();this.buildAchievements();
+  },
+  fmt(v){
+    if(v<1000)return Math.floor(v).toString();
+    const u=['','K','M','B','T','Qa','Qi','Sx','Sp','Oc'];
+    const t=Math.floor(Math.log10(v)/3),s=v/Math.pow(1000,t);
+    return s.toFixed(s<10?2:s<100?1:0)+(u[t]||'e'+t*3);
+  },
+  renderHUD(){
+    const s=State;
+    this.el.fpValue.textContent=this.fmt(s.fp);
+    this.el.fpPerSec.textContent=this.fmt(s.perSecond())+' FP/sec';
+    this.el.fpPerClick.textContent='+'+this.fmt(s.clickValue())+' / click';
+    this.el.multiplierChip.textContent='✨ x'+s.multiplier().toFixed(2)+' Multiplier';
+    const lvl=s.level,cur=CONFIG.LEVELS[lvl],next=CONFIG.LEVELS[lvl+1];
+    this.el.levelTag.textContent='LVL '+(lvl+1);this.el.levelName.textContent=cur.name;
+    if(next){const span=next.req-cur.req,done=s.lifetime-cur.req,pct=Math.max(0,Math.min(100,done/span*100));
+      this.el.levelProgressFill.style.width=pct+'%';this.el.levelProgressText.textContent=this.fmt(s.lifetime)+' / '+this.fmt(next.req);
+    }else{this.el.levelProgressFill.style.width='100%';this.el.levelProgressText.textContent='MAX — Bloodline Retired 👑';}
+  },
+  buildShop(){
+    this.el.shopList.innerHTML='';let lastTier=null;
+    for(const u of CONFIG.UPGRADES){
+      if(u.tier!==lastTier){lastTier=u.tier;const h=document.createElement('div');h.className='shop-tier';h.textContent=u.tier;this.el.shopList.appendChild(h);}
+      const b=document.createElement('button');b.className='shop-item';b.dataset.id=u.id;
+      b.innerHTML=`${ART.icons[u.id]()}<span class="shop-body"><span class="shop-name">${u.name} <span class="shop-owned" data-owned></span></span><span class="shop-desc">${u.desc}</span><span class="shop-rate" data-rate></span></span><span class="shop-cost" data-cost></span>`;
+      b.addEventListener('click',()=>Game.buy(u.id));
+      this.el.shopList.appendChild(b);
+    }
+  },
+  renderShop(){
+    const qty=Game.qty;
+    for(const u of CONFIG.UPGRADES){
+      const it=this.el.shopList.querySelector(`[data-id="${u.id}"]`);if(!it)continue;
+      const owned=State.owned[u.id]||0;
+      const maxK=(qty==='max')?State.maxAffordable(u):0;
+      const k=(qty==='max')?Math.max(1,maxK):qty;
+      const cost=State.bulkCost(u,k);
+      const afford=(qty==='max')?maxK>=1:State.fp>=cost;
+      const locked=u.baseCost>State.lifetime*20&&owned===0;
+      it.classList.toggle('affordable',afford&&!locked);it.classList.toggle('locked',locked);it.disabled=!afford;
+      it.querySelector('[data-owned]').textContent=owned?`×${owned}`:'';
+      const tag=(qty==='max')?(maxK>0?`×${maxK} · `:''):(k>1?`×${k} · `:'');
+      it.querySelector('[data-cost]').textContent=tag+this.fmt(cost)+' FP';
+      // rate line: milestone doubler + progress to next x2
+      let rate=u.cps?`+${this.fmt(u.cps)} FP/s each`:`+${u.clickAdd}/click each`;
+      const mult=State.milestoneMult(owned);
+      if(mult>1)rate=`<span class="shop-milestone">⚡x${mult}</span> · `+rate;
+      if(owned>0&&!locked)rate+=` · x2 in ${CONFIG.MILESTONE_STEP-(owned%CONFIG.MILESTONE_STEP)}`;
+      it.querySelector('[data-rate]').innerHTML=locked?'🔒 Keep grinding…':rate;
+    }
+  },
+  buildAchievements(){
+    this.el.achievementList.innerHTML='';
+    for(const a of CONFIG.ACHIEVEMENTS){
+      const d=document.createElement('div');d.className='ach-item';d.dataset.id=a.id;
+      d.innerHTML=`<span data-badge>${ART.achBadge(false)}</span><span class="ach-body"><span class="ach-name">${a.name}</span><span class="ach-desc">${a.desc}</span></span><span class="ach-reward">+${Math.round(a.reward*100)}%</span>`;
+      this.el.achievementList.appendChild(d);
+    }
+  },
+  renderAchievements(){
+    for(const a of CONFIG.ACHIEVEMENTS){
+      const d=this.el.achievementList.querySelector(`[data-id="${a.id}"]`);if(!d)continue;
+      const on=!!State.achievements[a.id];
+      if(d.classList.contains('unlocked')!==on){d.classList.toggle('unlocked',on);d.querySelector('[data-badge]').innerHTML=ART.achBadge(on);}
+    }
+  },
+  renderStats(){
+    const s=State,owned=Object.values(s.owned).reduce((a,b)=>a+b,0),ach=Object.keys(s.achievements).length;
+    const days=(Date.now()-s.createdAt)/86400000;
+    const rows=[['💰 Current Freedom Points',this.fmt(s.fp)],['📈 Lifetime (this life)',this.fmt(s.lifetime)],
+      ['⚙️ Per second',this.fmt(s.perSecond())],['👆 Total clicks',this.fmt(s.totalClicks)],['🔥 Best combo',s.bestCombo],
+      ['🪙 Legacy Tokens',s.legacy],['♻️ Times retired',s.prestiges],['✨ Freedom Tickets caught',s.goldenCaught],
+      ['🛒 Upgrades owned',owned],['🏆 Achievements',`${ach} / ${CONFIG.ACHIEVEMENTS.length}`],
+      ['🌟 Total multiplier','x'+s.multiplier().toFixed(2)],
+      ['👛 Wallet',s.walletAddress?s.walletAddress.slice(0,4)+'…'+s.walletAddress.slice(-4):'Not connected'],
+      ['🪙 Verified $RETIRE held',s.walletAddress?this.fmt(s.walletBalance||0):'—'],
+      ['🎖️ Holder tier',s.walletTier||(s.walletAddress?'Below 5,000':'—')],
+      ['📅 Playing for',days<1?'<1 day':Math.floor(days)+' days']];
+    this.el.statsList.innerHTML=rows.map(([k,v])=>`<div class="stat-row"><span>${k}</span><b>${v}</b></div>`).join('');
+  },
+  renderPrestige(){
+    const s=State,pend=s.pendingLegacy();
+    this.el.prestigePanel.innerHTML=`
+      <div class="prestige-hero"><div class="prestige-emoji">🌴</div><h3>Retire &amp; Reincarnate</h3>
+      <p>Cash out this life for permanent <b>Legacy Tokens</b>. Each grants <b>+${Math.round(CONFIG.LEGACY_BONUS*100)}%</b> to everything, forever — across every future run.</p></div>
+      <div class="stats-list">
+        <div class="stat-row"><span>🪙 Legacy Tokens</span><b>${s.legacy}</b></div>
+        <div class="stat-row"><span>♻️ Times Retired</span><b>${s.prestiges}</b></div>
+        <div class="stat-row"><span>✨ Permanent Bonus</span><b>+${Math.round(s.legacy*CONFIG.LEGACY_BONUS*100)}%</b></div>
+        <div class="stat-row"><span>🎁 Retire now for</span><b>${pend} token${pend===1?'':'s'} (+${Math.round(pend*CONFIG.LEGACY_BONUS*100)}%)</b></div>
+      </div>
+      <button id="prestigeBtn" class="prestige-btn" ${pend<1?'disabled':''}>${pend<1?`Reach ${this.fmt(CONFIG.PRESTIGE_REQ)} lifetime FP to retire`:`🌴 Retire &amp; Reincarnate (+${Math.round(pend*CONFIG.LEGACY_BONUS*100)}%)`}</button>`;
+    const b=document.getElementById('prestigeBtn');if(b)b.addEventListener('click',()=>Game.prestige());
+  },
+  renderScene(){
+    const stage=CONFIG.LEVELS[State.level].scene;
+    if(this.el.scene.dataset.stage!==String(stage)){this.el.scene.dataset.stage=String(stage);this.el.scene.innerHTML=ART.scene(stage);}
+    if(this.el.grindAvatar.dataset.stage!==String(stage)){this.el.grindAvatar.dataset.stage=String(stage);this.el.grindAvatar.innerHTML=ART.avatars[stage]||ART.avatars[0];}
+  },
+  renderBuffs(){
+    const now=Date.now();
+    const active=State.activeBuffs.filter(b=>b.until>now);
+    if(active.length!==State.activeBuffs.length)State.activeBuffs=active;
+    this.el.buffBar.innerHTML=active.map(b=>`<span class="buff-chip ${b.kind}">${b.icon} ${b.name} <b>${Math.ceil((b.until-now)/1000)}s</b></span>`).join('');
+  },
+  renderCombo(){
+    const c=State.combo;
+    if(c>=3){const m=(1+Math.min(c-1,CONFIG.COMBO_MAX)*CONFIG.COMBO_STEP).toFixed(2);this.el.comboBadge.textContent=`🔥 ${c} combo · x${m}`;this.el.comboBadge.classList.add('show');}
+    else this.el.comboBadge.classList.remove('show');
+  },
+  renderToken(d){
+    const priceStr=d.price?(d.price<0.01?'$'+d.price.toPrecision(2):'$'+d.price.toFixed(4)):'—';
+    this.el.tokenPrice.textContent=priceStr;
+    const ch=d.change24h;this.el.tokenChange.textContent=(ch>=0?'▲ ':'▼ ')+Math.abs(ch).toFixed(1)+'%';
+    this.el.tokenChange.className='ticker-change '+(ch>=0?'up':'down');
+    this.el.tokenMc.textContent=d.marketCap?'MC '+this.fmt(d.marketCap):'';
+    const mp=document.getElementById('menuPrice');
+    if(mp)mp.textContent=d.price?`· ${priceStr} (${ch>=0?'+':''}${ch.toFixed(1)}%)`:'';
+  },
+  renderTokenError(){this.el.tokenPrice.textContent='live soon';this.el.tokenChange.textContent='';this.el.tokenMc.textContent='';},
+  renderWallet(a,tier,balance){
+    const short=a.slice(0,4)+'…'+a.slice(-4);
+    this.el.walletBtn.textContent=(tier?tier.emoji:'👛')+' '+short;
+    this.el.walletBtn.classList.add('connected');
+    if(tier){
+      this.el.holderChip.textContent=`${tier.emoji} ${tier.name} · +${Math.round(tier.mult*100)}%`;
+      this.el.holderChip.classList.remove('hidden');
+    }else if(typeof balance==='number'){
+      this.el.holderChip.textContent=`${this.fmt(balance)} $RETIRE held (5,000+ for a bonus)`;
+      this.el.holderChip.classList.remove('hidden');
+    }
+  },
+  spawnParticle(x,y,text,crit){
+    const p=document.createElement('span');p.className='particle'+(crit?' crit':'');p.textContent=text;
+    p.style.left=x+'px';p.style.top=y+'px';this.el.particleLayer.appendChild(p);
+    p.addEventListener('animationend',()=>p.remove());
+  },
+  coinBurst(x,y,n){
+    for(let i=0;i<n;i++){
+      const c=document.createElement('span');c.className='coin';c.textContent='🪙';c.style.left=x+'px';c.style.top=y+'px';
+      const ang=Math.random()*Math.PI*2,dist=40+Math.random()*95;
+      c.style.setProperty('--dx',Math.cos(ang)*dist+'px');
+      c.style.setProperty('--dy',(Math.sin(ang)*dist-40)+'px');
+      this.el.coinLayer.appendChild(c);c.addEventListener('animationend',()=>c.remove());
+    }
+  },
+  shake(){const p=this.el.clickerPanel;p.classList.remove('shake');void p.offsetWidth;p.classList.add('shake');},
+  toast(msg,kind='info'){
+    const t=document.createElement('div');t.className='toast toast-'+kind;t.textContent=msg;
+    this.el.toastLayer.appendChild(t);setTimeout(()=>t.classList.add('show'),10);
+    setTimeout(()=>{t.classList.remove('show');setTimeout(()=>t.remove(),300);},3200);
+  },
+  flashLevelUp(name){this.toast('🎉 LEVEL UP — '+name+'!','good');this.el.scene.classList.add('celebrate');setTimeout(()=>this.el.scene.classList.remove('celebrate'),900);this.coinBurst(innerWidth/2,innerHeight*0.4,18);this.shake();Sound.levelup();},
+};
+
+/* =========================================================================
+ * TOKEN — live $RETIRE price + read-only wallet holder bonus
+ * ========================================================================= */
+const Token = {
+  async fetchPrice(){
+    try{
+      const res=await fetch(CONFIG.PRICE_API+CONFIG.CONTRACT_ADDRESS,{headers:{accept:'application/json'}});
+      if(!res.ok)throw 0;
+      const j=await res.json();const pairs=j.pairs||[];if(!pairs.length)throw 0;
+      pairs.sort((a,b)=>(b.liquidity?.usd||0)-(a.liquidity?.usd||0));const p=pairs[0];
+      UI.renderToken({price:+p.priceUsd||0,change24h:+(p.priceChange?.h24)||0,marketCap:+(p.marketCap||p.fdv)||0});
+    }catch(e){UI.renderTokenError();}
+  },
+  startPolling(){this.fetchPrice();setInterval(()=>this.fetchPrice(),CONFIG.PRICE_REFRESH_MS);},
+
+  /* ----------------------------------------------------------------------
+   * Real on-chain balance check — read-only JSON-RPC call, no signing.
+   * Sums every token account the wallet owns for our mint (usually one).
+   * -------------------------------------------------------------------- */
+  async fetchTokenBalance(address){
+    const body={jsonrpc:'2.0',id:1,method:'getTokenAccountsByOwner',
+      params:[address,{mint:CONFIG.CONTRACT_ADDRESS},{encoding:'jsonParsed'}]};
+    const res=await fetch(CONFIG.SOLANA_RPC,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(body)});
+    if(!res.ok)throw new Error('RPC HTTP '+res.status);
+    const json=await res.json();
+    if(json.error)throw new Error(json.error.message||'RPC error');
+    const accounts=json.result?.value||[];
+    return accounts.reduce((sum,a)=>sum+(a.account?.data?.parsed?.info?.tokenAmount?.uiAmount||0),0);
+  },
+
+  tierFor(balance){
+    let tier=null;
+    for(const t of CONFIG.HOLDER_TIERS)if(balance>=t.min)tier=t;
+    return tier;
+  },
+
+  /** Verify balance for the currently connected address and update bonuses. */
+  async verifyHolding(address,{silent=false}={}){
+    try{
+      const balance=await this.fetchTokenBalance(address);
+      const tier=this.tierFor(balance);
+      const prevTier=State.walletTier;
+      State.walletBalance=balance;
+      State.walletBonus=tier?tier.mult:0;
+      State.walletTier=tier?tier.name:null;
+      UI.renderWallet(address,tier,balance);
+      if(!silent){
+        if(tier) UI.toast(`${tier.emoji} Verified ${UI.fmt(balance)} $RETIRE — ${tier.name} (+${Math.round(tier.mult*100)}%)`,'good');
+        else UI.toast(`Wallet verified — ${UI.fmt(balance)} $RETIRE. Hold 5,000+ to unlock a bonus.`,'info');
+      } else if(tier?.name!==prevTier && (tier||prevTier)){
+        UI.toast(tier ? `${tier.emoji} Holder tier updated: ${tier.name}!` : 'Holder bonus lost — balance dropped below 5,000 $RETIRE.', tier?'good':'warn');
+      }
+      Game.checkProgress();UI.renderHUD();State.save();
+    }catch(e){
+      console.warn('Balance verification failed:',e);
+      if(!silent)UI.toast('⚠️ Could not verify balance right now (RPC busy) — try again shortly.','warn');
+    }
+  },
+
+  async connectWallet(){
+    const prov=window.solana||window.phantom?.solana;
+    if(!prov||!prov.isPhantom){UI.toast('👛 No Solana wallet found. Install Phantom to verify your $RETIRE holdings.','warn');window.open('https://phantom.app/','_blank','noopener');return;}
+    try{
+      const r=await prov.connect();const addr=r.publicKey.toString();
+      State.walletAddress=addr;
+      UI.toast('🔎 Verifying your $RETIRE balance on-chain…','info');
+      await this.verifyHolding(addr);
+      // Re-verify periodically so bonuses always reflect real, current holdings.
+      if(!this._recheckTimer)this._recheckTimer=setInterval(()=>{if(State.walletAddress)this.verifyHolding(State.walletAddress,{silent:true});},CONFIG.HOLDER_RECHECK_MS);
+    }catch(e){UI.toast('Wallet connection cancelled.','warn');}
+  },
+
+  /** Attempt a silent reconnect for a returning, already-trusted wallet. */
+  async tryAutoReconnect(){
+    if(!State.walletAddress)return;
+    const prov=window.solana||window.phantom?.solana;
+    if(!prov)return;
+    try{
+      await prov.connect({onlyIfTrusted:true});
+      await this.verifyHolding(State.walletAddress,{silent:true});
+      if(!this._recheckTimer)this._recheckTimer=setInterval(()=>{if(State.walletAddress)this.verifyHolding(State.walletAddress,{silent:true});},CONFIG.HOLDER_RECHECK_MS);
+    }catch(e){ /* wallet locked or not trusted — user can reconnect manually */ }
+  },
+};
+
+/* =========================================================================
+ * GAME — loop, clicks, buys, progression, golden tickets, prestige, share
+ * ========================================================================= */
+const Game = {
+  lastTick:Date.now(),
+  qty:1, // active buy quantity: 1 | 10 | 100 | 'max'
+  start(){
+    Sound.init();
+    const off=State.load();UI.init();this.wire();this.offline(off);this.refresh();
+    document.getElementById('soundBtn').textContent=Sound.muted?'🔇':'🔊';
+    this.lastTick=Date.now();
+    setInterval(()=>this.tick(),CONFIG.TICK_MS);
+    setInterval(()=>State.save(),CONFIG.AUTOSAVE_MS);
+    window.addEventListener('beforeunload',()=>State.save());
+    Token.startPolling();
+    Token.tryAutoReconnect();
+    this.scheduleGolden();
+  },
+  tick(){
+    const now=Date.now(),dt=(now-this.lastTick)/1000;this.lastTick=now;
+    const e=State.perSecond()*dt;if(e>0)State.earn(e);
+    if(State.combo>0&&now-State.lastClick>CONFIG.COMBO_WINDOW+300){State.combo=0;UI.renderCombo();}
+    this.checkProgress();UI.renderHUD();UI.renderShop();UI.renderBuffs();
+  },
+  click(evt){
+    Sound.resume();
+    const now=Date.now();
+    State.combo=(now-State.lastClick<CONFIG.COMBO_WINDOW)?State.combo+1:1;
+    State.lastClick=now;
+    if(State.combo>State.bestCombo)State.bestCombo=State.combo;
+    const comboMult=1+Math.min(State.combo-1,CONFIG.COMBO_MAX)*CONFIG.COMBO_STEP;
+    let gain=State.clickValue()*comboMult;
+    const x=evt.clientX||(evt.touches&&evt.touches[0]?.clientX)||innerWidth/2;
+    const y=evt.clientY||(evt.touches&&evt.touches[0]?.clientY)||innerHeight*0.4;
+    const crit=Math.random()<CONFIG.CRIT_CHANCE;
+    if(crit){gain*=CONFIG.CRIT_MULT;Sound.crit();UI.shake();UI.coinBurst(x,y,10);}else Sound.click(State.combo);
+    State.earn(gain);State.totalClicks++;
+    UI.spawnParticle(x,y,(crit?'💥+':'+')+UI.fmt(gain),crit);
+    const btn=document.getElementById('grindButton');btn.classList.remove('pop');void btn.offsetWidth;btn.classList.add('pop');
+    this.checkProgress();UI.renderHUD();UI.renderCombo();
+  },
+  buy(id){
+    const u=CONFIG.UPGRADES.find(x=>x.id===id);if(!u)return;
+    Sound.resume();
+    const k=(this.qty==='max')?State.maxAffordable(u):this.qty;
+    const bought=State.buyMany(u,k);
+    if(bought>0){Sound.buy();UI.toast(`Bought ${bought}× ${u.name}!`,'good');this.checkProgress();this.refresh();State.save();}
+    else UI.toast('Not enough Freedom Points 😅','warn');
+  },
+  checkProgress(){
+    const prev=State.level,cur=State.computeLevel();
+    if(cur>prev){UI.flashLevelUp(CONFIG.LEVELS[cur].name);UI.renderScene();}
+    for(const a of CONFIG.ACHIEVEMENTS)if(!State.achievements[a.id]&&a.check(State)){
+      State.achievements[a.id]=true;UI.toast(`🏆 ${a.name} (+${Math.round(a.reward*100)}%)`,'good');UI.renderAchievements();
+    }
+  },
+  offline(sec){
+    if(sec<60)return;
+    const cap=Math.min(sec,CONFIG.MAX_OFFLINE_HOURS*3600),e=State.perSecond()*cap*0.5;
+    if(e<=0)return;State.earn(e);
+    UI.toast(`😴 While retired (${Math.floor(cap/60)} min) you earned +${UI.fmt(e)} FP!`,'good');
+  },
+  /* ---- Golden "Freedom Ticket" ---- */
+  scheduleGolden(){
+    const {minGap,maxGap}=CONFIG.GOLDEN;
+    setTimeout(()=>{this.spawnGolden();this.scheduleGolden();},(minGap+Math.random()*(maxGap-minGap))*1000);
+  },
+  spawnGolden(){
+    const g=document.createElement('button');g.className='golden';g.title='A Freedom Ticket! Grab it!';
+    g.style.top=(12+Math.random()*55)+'vh';g.innerHTML=ART.golden();
+    g.style.animationDuration=CONFIG.GOLDEN.life+'s';
+    g.addEventListener('click',()=>this.catchGolden(g));
+    document.getElementById('goldenLayer').appendChild(g);
+    g._t=setTimeout(()=>g.remove(),CONFIG.GOLDEN.life*1000);
+  },
+  catchGolden(g){
+    clearTimeout(g._t);const r=g.getBoundingClientRect();g.remove();
+    State.goldenCaught++;Sound.golden();UI.coinBurst(r.left+r.width/2,r.top+r.height/2,16);
+    const b=CONFIG.GOLDEN_BUFFS[Math.floor(Math.random()*CONFIG.GOLDEN_BUFFS.length)];
+    if(b.kind==='cash'){
+      const amt=Math.max(State.perSecond()*90,State.clickValue()*20,State.fp*0.15,50);
+      State.earn(amt);UI.toast(`💰 Lucky Payout! +${UI.fmt(amt)} FP`,'good');
+    }else{
+      State.activeBuffs.push({icon:b.icon,name:b.name,kind:b.kind,mult:b.mult,until:Date.now()+b.dur*1000});
+      Sound.buff();UI.toast(`${b.icon} ${b.name}! ${b.toast}`,'good');UI.renderBuffs();
+    }
+    this.checkProgress();UI.renderHUD();
+  },
+  /* ---- Prestige ---- */
+  prestige(){
+    const gain=State.pendingLegacy();
+    if(gain<1){UI.toast(`Reach ${UI.fmt(CONFIG.PRESTIGE_REQ)} lifetime FP to retire.`,'warn');return;}
+    if(!confirm(`Retire & reincarnate?\n\nYou'll gain ${gain} Legacy Token(s) (+${Math.round(gain*CONFIG.LEGACY_BONUS*100)}% forever) but reset your Freedom Points, upgrades and level.\n\nAchievements & Legacy are kept.`))return;
+    State.legacy+=gain;State.prestiges++;State.softReset();
+    Sound.prestige();UI.coinBurst(innerWidth/2,innerHeight*0.4,26);UI.shake();
+    this.checkProgress();this.refresh();State.save();
+    UI.toast(`🌴 Reincarnated! +${gain} Legacy Token(s) (+${Math.round(gain*CONFIG.LEGACY_BONUS*100)}% forever).`,'good');
+  },
+  refresh(){UI.renderHUD();UI.renderShop();UI.renderAchievements();UI.renderScene();UI.renderStats();UI.renderPrestige();UI.renderBuffs();UI.renderCombo();},
+  share(){
+    const s=State,nm=CONFIG.LEVELS[s.level].name;
+    const legacyLine=s.legacy?`\n🪙 ${s.legacy} Legacy Tokens across ${s.prestiges} retirement(s).`:'';
+    const text=`I just hit "${nm}" (Lvl ${s.level+1}) in $RETIRE Retirement Tycoon 🏝️\n${UI.fmt(s.lifetime)} lifetime Freedom Points. Grind once. Retire forever.${legacyLine}\n\nCA: ${CONFIG.CONTRACT_ADDRESS}\n\nPlay & escape the 9-5 👇`;
+    window.open('https://twitter.com/intent/tweet?text='+encodeURIComponent(text),'_blank','noopener');
+  },
+  exportSave(){
+    const data=btoa(unescape(encodeURIComponent(State.serialize())));
+    (navigator.clipboard?.writeText(data)||Promise.reject()).then(()=>UI.toast('📋 Save code copied!','good'),()=>prompt('Copy your save code:',data));
+  },
+  importSave(){
+    const c=prompt('Paste your save code:');if(!c)return;
+    try{localStorage.setItem(CONFIG.SAVE_KEY,decodeURIComponent(escape(atob(c.trim()))));State.load();this.refresh();UI.toast('✅ Save imported!','good');}
+    catch(e){UI.toast('❌ Invalid save code.','warn');}
+  },
+  hardReset(){if(!confirm('This wipes ALL progress forever, including Legacy Tokens. Retire from retiring?'))return;State.hardReset();this.refresh();UI.toast('💀 Fresh start. Back to the cubicle.','info');},
+  wire(){
+    document.getElementById('grindButton').addEventListener('click',e=>this.click(e));
+    document.addEventListener('keydown',e=>{
+      if(e.code==='Space'&&e.target===document.body&&!document.querySelector('.overlay:not(.hidden)')){e.preventDefault();this.click({clientX:innerWidth/2,clientY:innerHeight*0.4});}
+    });
+    document.querySelectorAll('.tab').forEach(tab=>tab.addEventListener('click',()=>{
+      Sound.resume();
+      document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c=>c.classList.add('hidden'));
+      tab.classList.add('active');document.getElementById('tab-'+tab.dataset.tab).classList.remove('hidden');
+      if(tab.dataset.tab==='stats')UI.renderStats();
+      if(tab.dataset.tab==='prestige')UI.renderPrestige();
+    }));
+    document.querySelectorAll('.qty-btn').forEach(b=>b.addEventListener('click',()=>{
+      document.querySelectorAll('.qty-btn').forEach(x=>x.classList.remove('active'));
+      b.classList.add('active');
+      this.qty=(b.dataset.qty==='max')?'max':parseInt(b.dataset.qty,10);
+      UI.renderShop();
+    }));
+    document.getElementById('soundBtn').addEventListener('click',e=>{Sound.resume();e.currentTarget.textContent=Sound.toggle()?'🔇':'🔊';});
+    document.getElementById('walletBtn').addEventListener('click',()=>Token.connectWallet());
+    document.getElementById('shareBtn').addEventListener('click',()=>this.share());
+    document.getElementById('exportBtn').addEventListener('click',()=>this.exportSave());
+    document.getElementById('importBtn').addEventListener('click',()=>this.importSave());
+    document.getElementById('resetBtn').addEventListener('click',()=>this.hardReset());
+    document.getElementById('tokenTicker').addEventListener('click',()=>window.open('https://dexscreener.com/solana/'+CONFIG.CONTRACT_ADDRESS,'_blank','noopener'));
+    document.getElementById('caBox').addEventListener('click',()=>{navigator.clipboard?.writeText(CONFIG.CONTRACT_ADDRESS).then(()=>UI.toast('📋 Contract address copied!','good'),()=>{});});
+  },
+};
+
+/* =========================================================================
+ * LEADERBOARD — pluggable backend. Works LOCALLY out of the box; drop in
+ * Supabase credentials below to enable a shared GLOBAL board.
+ *
+ * To go global, create a free Supabase project and run this SQL, then fill
+ * SUPABASE_URL + SUPABASE_KEY (the public "anon" key) here:
+ *
+ *   create table leaderboard (
+ *     name text primary key,
+ *     score bigint not null default 0,
+ *     updated_at timestamptz default now()
+ *   );
+ *   alter table leaderboard enable row level security;
+ *   create policy "read"  on leaderboard for select using (true);
+ *   create policy "write" on leaderboard for insert with check (true);
+ *   create policy "upd"   on leaderboard for update using (true);
+ *
+ * Only a display name + score are ever stored — no wallet, no personal data.
+ * ========================================================================= */
+const Leaderboard = {
+  SUPABASE_URL:'', SUPABASE_KEY:'', TABLE:'leaderboard',
+  LOCAL_KEY:'retire_leaderboard_local',
+  isGlobal(){return !!(this.SUPABASE_URL&&this.SUPABASE_KEY);},
+  scope(){return this.isGlobal()?'🌍 Global leaderboard':'📱 Local leaderboard (this device)';},
+
+  async submit(name,score){
+    name=(name||'Anon Grinder').trim().slice(0,18)||'Anon Grinder';
+    score=Math.floor(score);
+    return this.isGlobal()?this._supaSubmit(name,score):this._localSubmit(name,score);
+  },
+  async top(limit=25){ return this.isGlobal()?this._supaTop(limit):this._localTop(limit); },
+
+  _localAll(){try{return JSON.parse(localStorage.getItem(this.LOCAL_KEY))||[];}catch(e){return [];}},
+  _localSubmit(name,score){
+    const list=this._localAll();const ex=list.find(e=>e.name===name);
+    if(ex)ex.score=Math.max(ex.score,score);else list.push({name,score});
+    try{localStorage.setItem(this.LOCAL_KEY,JSON.stringify(list));}catch(e){}
+    return true;
+  },
+  _localTop(limit){return this._localAll().slice().sort((a,b)=>b.score-a.score).slice(0,limit);},
+
+  _headers(extra){return Object.assign({apikey:this.SUPABASE_KEY,Authorization:'Bearer '+this.SUPABASE_KEY},extra||{});},
+  async _supaSubmit(name,score){
+    const res=await fetch(`${this.SUPABASE_URL}/rest/v1/${this.TABLE}?on_conflict=name`,{
+      method:'POST',
+      headers:this._headers({'content-type':'application/json',Prefer:'resolution=merge-duplicates,return=minimal'}),
+      body:JSON.stringify([{name,score,updated_at:new Date().toISOString()}]),
+    });
+    return res.ok;
+  },
+  async _supaTop(limit){
+    const res=await fetch(`${this.SUPABASE_URL}/rest/v1/${this.TABLE}?select=name,score&order=score.desc&limit=${limit}`,{headers:this._headers()});
+    if(!res.ok)throw new Error('LB HTTP '+res.status);
+    return res.json();
+  },
+};
+
+/* =========================================================================
+ * MENU — start menu, settings & leaderboard controllers
+ * ========================================================================= */
+const Menu = {
+  init(){
+    const $=id=>document.getElementById(id);
+    // apply saved preferences
+    if(localStorage.getItem('retire_reduce_motion')==='1')document.body.classList.add('reduce-motion');
+
+    // Returning players (existing save with real progress) see "Continue".
+    if(State.allTimeEarned>0)$('playBtn').textContent='▶ CONTINUE';
+    $('playBtn').addEventListener('click',()=>{Sound.resume();this.hide('startMenu');});
+    $('menuBtn').addEventListener('click',()=>this.show('startMenu'));
+    $('openSettings').addEventListener('click',()=>this.openSettings());
+    $('openLeaderboard').addEventListener('click',()=>this.openLeaderboard());
+
+    // close buttons + backdrop click (start menu only closes via Play)
+    document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',()=>this.hide(b.closest('.overlay').id)));
+    document.querySelectorAll('.overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o&&o.id!=='startMenu')this.hide(o.id);}));
+
+    // settings controls
+    $('setSound').addEventListener('change',e=>{Sound.muted=!e.target.checked;try{localStorage.setItem('retire_muted',Sound.muted?'1':'0');}catch(_){}document.getElementById('soundBtn').textContent=Sound.muted?'🔇':'🔊';if(!Sound.muted){Sound.resume();Sound.buy();}});
+    $('setMotion').addEventListener('change',e=>{document.body.classList.toggle('reduce-motion',e.target.checked);try{localStorage.setItem('retire_reduce_motion',e.target.checked?'1':'0');}catch(_){}});
+    $('setName').addEventListener('input',e=>{State.playerName=e.target.value.slice(0,18);State.save();});
+    $('setExport').addEventListener('click',()=>Game.exportSave());
+    $('setImport').addEventListener('click',()=>Game.importSave());
+    $('setReset').addEventListener('click',()=>Game.hardReset());
+
+    // leaderboard submit
+    $('lbSubmit').addEventListener('click',()=>this.submitScore());
+
+    // menu CA copy
+    $('menuCa').addEventListener('click',()=>{navigator.clipboard?.writeText(CONFIG.CONTRACT_ADDRESS).then(()=>UI.toast('📋 Contract address copied!','good'),()=>{});});
+  },
+  show(id){document.getElementById(id).classList.remove('hidden');},
+  hide(id){document.getElementById(id).classList.add('hidden');},
+
+  openSettings(){
+    document.getElementById('setSound').checked=!Sound.muted;
+    document.getElementById('setMotion').checked=document.body.classList.contains('reduce-motion');
+    document.getElementById('setName').value=State.playerName||'';
+    this.show('settingsModal');
+  },
+  async openLeaderboard(){
+    document.getElementById('lbScope').textContent=Leaderboard.scope();
+    document.getElementById('lbName').value=State.playerName||'';
+    this.show('leaderboardModal');
+    this.renderList();
+  },
+  async renderList(){
+    const list=document.getElementById('lbList');
+    list.innerHTML='<div class="lb-loading">Loading…</div>';
+    try{
+      const rows=await Leaderboard.top(25);
+      if(!rows||!rows.length){list.innerHTML='<div class="lb-empty">No scores yet — be the first to retire! 🏝️</div>';return;}
+      const medal=i=>i===0?'🥇':i===1?'🥈':i===2?'🥉':'#'+(i+1);
+      list.innerHTML=rows.map((r,i)=>`<div class="lb-row${r.name===State.playerName?' me':''}"><span class="lb-rank">${medal(i)}</span><span class="lb-name">${esc(r.name)}</span><span class="lb-score">${UI.fmt(r.score)} FP</span></div>`).join('');
+    }catch(e){list.innerHTML='<div class="lb-empty">Leaderboard unavailable right now — try again shortly.</div>';}
+  },
+  async submitScore(){
+    const btn=document.getElementById('lbSubmit');
+    const name=(document.getElementById('lbName').value||State.playerName||'Anon Grinder').trim().slice(0,18)||'Anon Grinder';
+    State.playerName=name;State.save();
+    btn.disabled=true;btn.textContent='Submitting…';
+    let ok=false;try{ok=await Leaderboard.submit(name,State.allTimeEarned);}catch(e){ok=false;}
+    btn.disabled=false;btn.textContent='Submit my score';
+    if(ok){UI.toast('🏆 Score submitted to the leaderboard!','good');this.renderList();}
+    else UI.toast('Could not submit right now — try again shortly.','warn');
+  },
+};
+// Escape user-supplied text before inserting into HTML (leaderboard names).
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  Game.start();
+  Menu.init();
+  console.log('%c$RETIRE Retirement Tycoon — Grind once. Retire forever. 🏝️','color:#10b981;font-weight:bold;font-size:14px');
+});
+</script>
+</body>
+</html>
