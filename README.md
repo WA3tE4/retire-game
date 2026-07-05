@@ -17,3 +17,17 @@ An addictive, meme-flavored **idle/clicker game** themed around **$RETIRE** — 
 [![Status](https://img.shields.io/badge/status-playable%20MVP-9cf)](#-roadmap)
 
 </div>
+
+
+# Visuals -
+> <img width="1899" height="953" alt="image" src="https://github.com/user-attachments/assets/d30d44b7-cde3-409c-9774-f842367b3711" />
+> <img width="1896" height="963" alt="image" src="https://github.com/user-attachments/assets/b37099f9-7d1f-4af5-8a3b-af6b2cec4969" />
+
+
+# Video Gameplay -
+
+
+
+> https://github.com/user-attachments/assets/957fa959-92cc-4c64-ae93-c128b04b9d1e
+
+
